@@ -1,0 +1,9 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- name: NETDATA
+  hosts: all
+  roles:
+    - netdata
+
+...

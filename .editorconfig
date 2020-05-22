@@ -1,0 +1,15 @@
+root = true
+
+[*]
+end_of_line = lf
+charset = utf-8
+
+[Makefile]
+indent_style = tab
+
+[Dockerfile]
+indent_style = space
+
+[*.{json,yml,tf}]
+indent_style = space
+indent_size = 2

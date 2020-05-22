@@ -1,0 +1,9 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- name: BACKUPS
+  hosts: all
+  roles:
+    - backup
+
+...

@@ -1,0 +1,9 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- name: NEXTCLOUD SERVER
+  hosts: nextcloud
+  roles:
+    - nextcloud
+
+...

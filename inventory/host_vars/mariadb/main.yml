@@ -1,0 +1,6 @@
+---
+
+mariadb_config_mysqld: |
+  bind-address = *
+
+mariadb_root_password: "{{ vault_mariadb_root_password }}"

@@ -1,0 +1,9 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- name: CERTBOT OVH
+  hosts: lb:smtp:imap
+  roles:
+    - certbot-ovh
+
+...

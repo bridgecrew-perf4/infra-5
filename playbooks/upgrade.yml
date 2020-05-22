@@ -1,0 +1,31 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- name: UPGRADE SERVERS
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: apt-get dist-upgrade
+      apt:
+        force_apt_get: true
+        install_recommends: false
+        cache_valid_time: 3600
+        upgrade: dist
+    - name: check if reboot required
+      register: reboot_required
+      stat:
+        path: /var/run/reboot-required
+    - name: reboot
+      when: reboot_required.stat.exists
+      reboot:
+    - name: clean
+      apt:
+        force_apt_get: true
+        autoclean: true
+    - name: autoremove
+      apt:
+        force_apt_get: true
+        autoremove: true
+        purge: true
+
+...

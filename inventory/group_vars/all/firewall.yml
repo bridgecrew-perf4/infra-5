@@ -1,0 +1,19 @@
+---
+
+ferm_antilockout_enabled: false
+
+ferm_input_rule_bastion:
+    saddr:
+      - "{{ lookup('dig', 'bastion.priv.karolak.fr') }}"
+    proto:
+      - tcp
+    dport:
+      - 22
+
+ferm_input_rule_netdata:
+  saddr:
+    - "{{ lookup('dig', 'lb.priv.karolak.fr') }}"
+  proto:
+    - tcp
+  dport:
+    - 19999

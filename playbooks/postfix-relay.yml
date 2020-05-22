@@ -1,0 +1,9 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- name: POSTFIX RELAY
+  hosts: all:!smtp
+  roles:
+    - postfix-relay
+
+...

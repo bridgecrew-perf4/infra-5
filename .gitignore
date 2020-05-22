@@ -1,0 +1,8 @@
+# temporary directories and files
+.terraform/
+tfplan
+
+# secrets
+ovh.conf
+scaleway.conf
+vault_password.gpg

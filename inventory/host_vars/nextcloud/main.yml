@@ -1,0 +1,102 @@
+---
+
+nc_admin_password: "{{ vault_nc_admin_password }}"
+
+nc_apps:
+  - calendar
+  - circles
+  - contacts
+  - groupfolders
+  - mail
+  - music
+  - news
+  - notes
+  - spreed
+  - tasks
+  - user_external
+
+nc_db_admin_password: "{{ vault_pg_password }}"
+nc_db_host: "{{ lookup('dig', 'postgresql.priv.karolak.fr') }}"
+nc_db_user_password: "{{ vault_nc_db_user_password }}"
+
+nc_domains:
+  - "cloud.karolak.fr"
+  - "cloud.maison-people.com"
+
+nc_config:
+  system:
+    activity_expire_days: 30
+    datadirectory: "{{ nc_data_path }}"
+    dbtype: pgsql
+    dbhost: "{{ nc_db_host }}"
+    dbport: 5432
+    dbuser: nextcloud
+    dbpassword: "{{ vault_nc_db_user_password }}"
+    dbtableprefix: oc_
+    forwarded_for_headers:
+      - HTTP_X_REAL_IP
+    htaccess.RewriteBase: /
+    log_type: syslog
+    loglevel: 2
+    mail_domain: karolak.fr
+    mail_from_address: noreply
+    mail_smtpmode: smtp
+    mail_smtphost: smtp.karolak.fr
+    mail_smtpport: 587
+    mail_smtpsecure: tls
+    mail_smtpauthtype: LOGIN
+    mail_smtpauth: 1
+    mail_smtpname: noreply@karolak.fr
+    mail_smtppassword: "{{ vault_nc_smtp_password }}"
+    memcache.distributed: \OC\Memcache\Redis
+    memcache.local: \OC\Memcache\APCu
+    memcache.locking: \OC\Memcache\Redis
+    objectstore:
+      class: \OC\Files\ObjectStore\S3
+      arguments:
+        bucket: karolak-nextcloud-data-bucket
+        autocreate: true
+        key: "{{ vault_nc_s3_access_key }}"
+        secret: "{{ vault_nc_s3_secret_key }}"
+        hostname: s3.fr-par.scw.cloud
+        port: 443
+        use_ssl: true
+        region: fr-par
+    overwrite.cli.url: https://{{ nc_domains[0] }}
+    overwriteprotocol: https
+    redis:
+      host: redis.priv.karolak.fr
+      port: 6379
+      dbindex: 0
+      password: "{{ vault_redis_password }}"
+    skeletondirectory: ""
+    trashbin_retention_obligation: auto, 3
+    trusted_domains: "{{ nc_domains }}"
+    trusted_proxies: "{{ nc_trusted_proxies }}"
+    updatechecker: false
+    upgrade.disable-web: true
+    user_backends:
+      - class: OC_User_IMAP
+        arguments:
+          - imap.karolak.fr
+          - 993
+          - ssl
+          - ""
+          - false
+          - true
+    versions_retention_obligation: auto, 3
+  apps:
+    core:
+      backgroundjobs_mode: cron
+    files:
+      default_quota: 10 GB
+    mail:
+      provisioning_settings: '{"active":true,"version":1,"email":"%USERID%","imapUser":"%USERID%","imapHost":"imap.karolak.fr","imapPort":993,"imapSslMode":"ssl","smtpUser":"%USERID%","smtpHost":"smtp.karolak.fr","smtpPort":587,"smtpSslMode":"tls"}'
+
+nc_s3_access_key: "{{ vault_nc_s3_access_key }}"
+nc_s3_secret_key: "{{ vault_nc_s3_secret_key }}"
+
+nc_smtp_password: "{{ vault_nc_smtp_password }}"
+
+nc_trusted_proxies:
+  - "{{ lookup('dig', 'lb.priv.karolak.fr.') }}"

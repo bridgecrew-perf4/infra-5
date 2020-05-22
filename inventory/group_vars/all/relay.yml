@@ -1,0 +1,7 @@
+---
+
+relay_admin: admin+{{ ansible_hostname }}@karolak.fr
+relay_domain: priv.karolak.fr
+relay_host: "[smtp.karolak.fr]:587"
+relay_password: "{{ vault_relay_password }}"
+relay_user: noreply@karolak.fr

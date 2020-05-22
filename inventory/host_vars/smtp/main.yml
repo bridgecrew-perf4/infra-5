@@ -1,0 +1,13 @@
+---
+
+certbot_domains:
+  - mail.karolak.fr
+  - smtp.karolak.fr
+
+smtp_db_host: "{{ lookup('dig', 'postgresql.priv.karolak.fr') }}"
+smtp_db_password: "{{ vault_smtp_db_password }}"
+smtp_host_domain: karolak.fr
+smtp_host_name: smtp
+smtp_imap_host: "{{ lookup('dig', 'imap.priv.karolak.fr') }}"
+smtp_tls_cert: /etc/letsencrypt/live/{{ certbot_domains[0] }}/fullchain.pem
+smtp_tls_key: /etc/letsencrypt/live/{{ certbot_domains[0] }}/privkey.pem

@@ -1,0 +1,14 @@
+---
+
+bkp_jobs:
+  - type: sh
+    name: gitea
+    command: |
+      sudo -u git gitea dump --config /etc/gitea/app.ini --file /var/backups/gitea-dump.zip
+  - type: sh
+    priority: 20
+    name: restic
+    command: |
+      restic snapshots &> /dev/null || restic init
+      restic backup /etc /var/backups/gitea-dump.zip
+      restic forget --prune --keep-daily 7 --keep-weekly 4

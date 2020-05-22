@@ -1,0 +1,375 @@
+---
+
+ansible_port: 222
+
+certbot_domains:
+  - 'karolak.fr'
+  - '*.karolak.fr'
+
+certbot_wr_domains:
+  - 'cloud.maison-people.com'
+
+nginx_snippet:
+  - name: acme-challenge
+    content: |
+      location ^~ /.well-known/acme-challenge/ {
+        default_type "text/plain";
+        root /tmp;
+      }
+  - name: cert-karolak
+    content: |
+      ssl_certificate /etc/letsencrypt/live/karolak.fr/fullchain.pem;
+      ssl_certificate_key /etc/letsencrypt/live/karolak.fr/privkey.pem;
+  - name: cert-people
+    content: |
+      ssl_certificate /etc/letsencrypt/live/cloud.maison-people.com/fullchain.pem;
+      ssl_certificate_key /etc/letsencrypt/live/cloud.maison-people.com/privkey.pem;
+  - name: no-index
+    content: |
+      location /robots.txt {
+        return 200 "User-agent: *\nDisallow: /\n";
+      }
+  - name: tls
+    content: |
+      ssl_session_timeout 1d;
+      ssl_session_cache shared:ssl_cache:10m;  # about 40000 sessions
+      ssl_session_tickets off;
+
+      # modern configuration
+      ssl_protocols TLSv1.3;
+      ssl_prefer_server_ciphers off;
+
+      # HSTS (ngx_http_headers_module is required) (63072000 seconds)
+      add_header Strict-Transport-Security "max-age=63072000" always;
+
+      # OCSP stapling
+      ssl_stapling on;
+      ssl_stapling_verify on;
+
+      # verify chain of trust of OCSP response using Root CA and Intermediate certs
+      ssl_trusted_certificate /etc/ssl/certs/ca-certificates.crt;
+
+      # replace with the IP address of your resolver
+      resolver {{ ansible_dns.nameservers | join(' ') }};
+
+nginx_http:
+  - name: 00-global
+    content: |
+      client_max_body_size 200M;
+  - name: default
+    content: |
+      server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
+        server_name _;
+
+        include /etc/nginx/conf.d/snippet/acme-challenge.conf;
+
+        location / {
+          return 301 https://$host$request_uri;
+        }
+      }
+
+      server {
+        listen 443 ssl http2 default_server;
+        listen [::]:443 ssl http2 default_server;
+        server_name _;
+
+        root /usr/share/nginx/html;
+
+        include /etc/nginx/conf.d/snippet/tls.conf;
+        include /etc/nginx/conf.d/snippet/cert-karolak.conf;
+        include /etc/nginx/conf.d/snippet/acme-challenge.conf;
+
+        location / {}
+      }
+  - name: blog
+    content: |
+      server {
+        listen 443 ssl http2;
+        listen [::]:443 ssl http2;
+        server_name blog.karolak.fr karolak.fr www.karolak.fr;
+
+        include /etc/nginx/conf.d/snippet/tls.conf;
+        include /etc/nginx/conf.d/snippet/cert-karolak.conf;
+        include /etc/nginx/conf.d/snippet/acme-challenge.conf;
+
+        location /index.xml {
+          return 301 $scheme://$host/feed/;
+        }
+
+        location / {
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+
+          proxy_pass http://{{ lookup('dig', 'web.priv.karolak.fr') }}/;
+        }
+      }
+  - name: crypto
+    content: |
+      server {
+        listen 443 ssl http2;
+        listen [::]:443 ssl http2;
+        server_name crypto.karolak.fr;
+
+        include /etc/nginx/conf.d/snippet/tls.conf;
+        include /etc/nginx/conf.d/snippet/cert-karolak.conf;
+        include /etc/nginx/conf.d/snippet/acme-challenge.conf;
+
+        location / {
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+
+          proxy_pass http://{{ lookup('dig', 'web.priv.karolak.fr') }}/;
+        }
+      }
+  - name: gitea
+    content: |
+      server {
+        listen 443 ssl http2;
+        listen [::]:443 ssl http2;
+        server_name git.karolak.fr;
+
+        include /etc/nginx/conf.d/snippet/tls.conf;
+        include /etc/nginx/conf.d/snippet/cert-karolak.conf;
+        include /etc/nginx/conf.d/snippet/acme-challenge.conf;
+        include /etc/nginx/conf.d/snippet/no-index.conf;
+
+        location / {
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+
+          proxy_pass http://{{ lookup('dig', 'gitea.priv.karolak.fr') }}:3000/;
+        }
+      }
+  - name: karolak-carrelage
+    content: |
+      server {
+        listen 443 ssl http2;
+        listen [::]:443 ssl http2;
+        server_name karolak-carrelage.com www.karolak-carrelage.com karolak-carrelage.fr www.karolak-carrelage.fr;
+
+        include /etc/nginx/conf.d/snippet/tls.conf;
+        include /etc/nginx/conf.d/snippet/cert-karolak.conf;
+        include /etc/nginx/conf.d/snippet/acme-challenge.conf;
+
+        location / {
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+
+          proxy_pass http://{{ lookup('dig', 'web.priv.karolak.fr') }}/;
+        }
+      }
+  - name: netdata
+    content: |
+      server {
+        listen 443 ssl http2;
+        listen [::]:443 ssl http2;
+        server_name ndata.karolak.fr;
+
+        include /etc/nginx/conf.d/snippet/tls.conf;
+        include /etc/nginx/conf.d/snippet/cert-karolak.conf;
+        include /etc/nginx/conf.d/snippet/acme-challenge.conf;
+        include /etc/nginx/conf.d/snippet/no-index.conf;
+
+        location ~ /(?<name>[a-zA-Z0-9]+)/(?<ndpath>.*) {
+          proxy_set_header Host $http_host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+
+          proxy_redirect off;
+          proxy_http_version 1.1;
+          proxy_pass_request_headers on;
+          proxy_set_header Connection "keep-alive";
+          proxy_store off;
+
+          proxy_pass http://$name.priv.karolak.fr:19999/$ndpath$is_args$args;
+
+          gzip on;
+          gzip_proxied any;
+          gzip_types *;
+
+          # home
+          allow 109.15.54.71;
+
+          deny all;
+        }
+
+        location ~ /(?<name>[a-zA-Z0-9]+) {
+          return 301 /$name/;
+        }
+      }
+  - name: nextcloud
+    content: |
+      server {
+        listen 443 ssl http2;
+        listen [::]:443 ssl http2;
+        server_name cloud.karolak.fr;
+
+        include /etc/nginx/conf.d/snippet/tls.conf;
+        include /etc/nginx/conf.d/snippet/cert-karolak.conf;
+        include /etc/nginx/conf.d/snippet/acme-challenge.conf;
+        include /etc/nginx/conf.d/snippet/no-index.conf;
+
+        location / {
+          proxy_set_header Host $http_host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+
+          proxy_pass http://{{ lookup('dig', 'nextcloud.priv.karolak.fr') }}/;
+        }
+
+        location = /.well-known/carddav {
+          return 301 $scheme://$host:$server_port/remote.php/dav;
+        }
+
+        location = /.well-known/caldav {
+          return 301 $scheme://$host:$server_port/remote.php/dav;
+        }
+      }
+  - name: nextcloud-people
+    content: |
+      server {
+        listen 443 ssl http2;
+        listen [::]:443 ssl http2;
+        server_name cloud.maison-people.com;
+
+        include /etc/nginx/conf.d/snippet/tls.conf;
+        include /etc/nginx/conf.d/snippet/cert-people.conf;
+        include /etc/nginx/conf.d/snippet/acme-challenge.conf;
+        include /etc/nginx/conf.d/snippet/no-index.conf;
+
+        location / {
+          proxy_set_header Host $http_host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+
+          proxy_pass http://{{ lookup('dig', 'nextcloud.priv.karolak.fr') }}/;
+        }
+
+        location = /.well-known/carddav {
+          return 301 $scheme://$host:$server_port/remote.php/dav;
+        }
+
+        location = /.well-known/caldav {
+          return 301 $scheme://$host:$server_port/remote.php/dav;
+        }
+      }
+  - name: postfixadmin
+    content: |
+      server {
+        listen 443 ssl http2;
+        listen [::]:443 ssl http2;
+        server_name pfa.karolak.fr;
+
+        include /etc/nginx/conf.d/snippet/tls.conf;
+        include /etc/nginx/conf.d/snippet/cert-karolak.conf;
+        include /etc/nginx/conf.d/snippet/acme-challenge.conf;
+        include /etc/nginx/conf.d/snippet/no-index.conf;
+
+        location / {
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+
+          proxy_pass http://{{ lookup('dig', 'smtp.priv.karolak.fr') }}/;
+
+          # home
+          allow 109.15.54.71;
+
+          deny all;
+        }
+      }
+  - name: rspamd
+    content: |
+      server {
+        listen 443 ssl http2;
+        listen [::]:443 ssl http2;
+        server_name rspamd.karolak.fr;
+
+        include /etc/nginx/conf.d/snippet/tls.conf;
+        include /etc/nginx/conf.d/snippet/cert-karolak.conf;
+        include /etc/nginx/conf.d/snippet/acme-challenge.conf;
+        include /etc/nginx/conf.d/snippet/no-index.conf;
+
+        location / {
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+
+          proxy_pass http://{{ lookup('dig', 'smtp.priv.karolak.fr') }}:11334/;
+
+          # home
+          allow 109.15.68.167;
+          allow 109.15.54.71;
+          # vpn
+          allow 163.172.132.142;
+          allow 2001:bc8:47a8:185f::1;
+
+          deny all;
+        }
+      }
+  - name: wallabag
+    content: |
+      server {
+        listen 443 ssl http2;
+        listen [::]:443 ssl http2;
+        server_name bag.karolak.fr;
+
+        include /etc/nginx/conf.d/snippet/tls.conf;
+        include /etc/nginx/conf.d/snippet/cert-karolak.conf;
+        include /etc/nginx/conf.d/snippet/acme-challenge.conf;
+        include /etc/nginx/conf.d/snippet/no-index.conf;
+
+        location / {
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+
+          proxy_pass http://{{ lookup('dig', 'wallabag.priv.karolak.fr') }}/;
+        }
+      }
+  - name: wedding
+    content: |
+      server {
+        listen 443 ssl http2;
+        listen [::]:443 ssl http2;
+        server_name wedding.karolak.fr;
+
+        include /etc/nginx/conf.d/snippet/tls.conf;
+        include /etc/nginx/conf.d/snippet/cert-karolak.conf;
+        include /etc/nginx/conf.d/snippet/acme-challenge.conf;
+        include /etc/nginx/conf.d/snippet/no-index.conf;
+
+        location / {
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+
+          proxy_pass http://{{ lookup('dig', 'web.priv.karolak.fr') }}/;
+        }
+      }
+
+nginx_stream:
+  - name: gitea
+    content: |
+      server {
+        listen 22;
+        listen [::]:22;
+        proxy_pass {{ lookup('dig', 'gitea.priv.karolak.fr') }}:22;
+      }

@@ -1,0 +1,8 @@
+---
+
+bkp_reportemail: admin+backup@karolak.fr
+bkp_restic_password: "{{ vault_bkp_restic_password }}"
+bkp_restic_repository: s3:https://s3.fr-par.scw.cloud/karolak-backup-bucket/{{ ansible_hostname }}
+bkp_restic_s3_access_key: "{{ vault_bkp_restic_s3_access_key }}"
+bkp_restic_s3_region: fr-par
+bkp_restic_s3_secret_key: "{{ vault_bkp_restic_s3_secret_key }}"

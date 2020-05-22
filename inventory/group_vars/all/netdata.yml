@@ -1,0 +1,16 @@
+---
+
+ndata_bind: "*"
+ndata_config:
+  - section: global
+    option: update every
+    value: 5
+  - section: global
+    option: history
+    value: 720
+  - section: global
+    option: access log
+    value: none
+  - section: web
+    option: allow connections from
+    value: "localhost {{ lookup('dig', 'lb.priv.karolak.fr') }}"

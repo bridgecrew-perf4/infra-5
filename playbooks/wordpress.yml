@@ -1,0 +1,9 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- name: WORDPRESS SERVER
+  hosts: web
+  roles:
+    - wordpress
+
+...

@@ -1,0 +1,15 @@
+---
+
+gitea_domain: git.karolak.fr
+gitea_internal_token: "{{ vault_gitea_internal_token }}"
+gitea_secret_key: "{{ vault_gitea_secret_key }}"
+gitea_jwt_secret: "{{ vault_gitea_jwt_secret }}"
+gitea_db_host: "{{ lookup('dig', 'postgresql.priv.karolak.fr') }}"
+gitea_db_admin_password: "{{ vault_pg_password }}"
+gitea_db_user_password: "{{ vault_gitea_db_user_password }}"
+gitea_redis_host: "{{ lookup('dig', 'redis.priv.karolak.fr') }}"
+gitea_redis_password: "{{ vault_redis_password }}"
+gitea_mailer_host: smtp.karolak.fr:587
+gitea_mailer_from: noreply <{{ relay_user }}>
+gitea_mailer_user: "{{ relay_user }}"
+gitea_mailer_passwd: "{{ relay_password }}"

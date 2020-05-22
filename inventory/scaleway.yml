@@ -1,0 +1,9 @@
+---
+
+plugin: scaleway
+hostnames:
+  - hostname
+variables:
+  ansible_host: private_ip
+
+...

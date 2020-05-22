@@ -1,0 +1,9 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- name: REDIS SERVER
+  hosts: redis
+  roles:
+    - redis
+
+...

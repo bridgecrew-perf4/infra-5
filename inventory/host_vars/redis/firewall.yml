@@ -1,0 +1,15 @@
+---
+
+ferm_input_rules:
+  - "{{ ferm_input_rule_bastion }}"
+  - "{{ ferm_input_rule_netdata }}"
+  - saddr:
+      - "{{ lookup('dig', 'gitea.priv.karolak.fr') }}"
+      - "{{ lookup('dig', 'nextcloud.priv.karolak.fr') }}"
+      - "{{ lookup('dig', 'smtp.priv.karolak.fr') }}"
+      - "{{ lookup('dig', 'wallabag.priv.karolak.fr') }}"
+      - "{{ lookup('dig', 'web.priv.karolak.fr') }}"
+    proto:
+      - tcp
+    dport:
+      - 6379

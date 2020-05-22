@@ -1,0 +1,10 @@
+---
+
+certbot_domains:
+  - imap.karolak.fr
+
+imap_db_host: "{{ lookup('dig', 'postgresql.priv.karolak.fr') }}"
+imap_db_password: "{{ vault_imap_db_password }}"
+imap_postmaster: postmaster@karolak.fr
+imap_tls_cert: /etc/letsencrypt/live/{{ certbot_domains[0] }}/fullchain.pem
+imap_tls_key: /etc/letsencrypt/live/{{ certbot_domains[0] }}/privkey.pem

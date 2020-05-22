@@ -1,0 +1,12 @@
+---
+
+rspamd_password: "{{ vault_rspamd_password }}"
+rspamd_password_salt: "{{ vault_rspamd_password_salt }}"
+rspamd_classifier_bayes: |
+  servers = "{{ lookup('dig', 'redis.priv.karolak.fr') }}";
+  backend = "redis";
+  db = "1"
+  password = "{{ vault_redis_password }}"
+rspamd_worker_controller: |
+  bind_socket = "*:11334"
+  password = "{{ rspamd_password | password_hash('bcrypt', rspamd_password_salt) }}"

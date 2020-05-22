@@ -1,0 +1,8 @@
+---
+
+certbot_email: admin+letsencrypt@karolak.fr
+certbot_ovh_application_key: "{{ vault_certbot_ovh_application_key }}"
+certbot_ovh_application_secret: "{{ vault_certbot_ovh_application_secret }}"
+certbot_ovh_consumer_key: "{{ vault_certbot_ovh_consumer_key }}"
+
+certbot_wr_email: "{{ certbot_email }}"

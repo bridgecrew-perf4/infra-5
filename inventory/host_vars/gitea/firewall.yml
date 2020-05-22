@@ -1,0 +1,17 @@
+---
+
+ferm_input_rules:
+  - "{{ ferm_input_rule_netdata }}"
+  - saddr:
+      - "{{ lookup('dig', 'bastion.priv.karolak.fr') }}"
+      - "{{ lookup('dig', 'lb.priv.karolak.fr') }}"
+    proto:
+      - tcp
+    dport:
+      - 22
+  - saddr:
+      - "{{ lookup('dig', 'lb.priv.karolak.fr') }}"
+    proto:
+      - tcp
+    dport:
+      - 3000
