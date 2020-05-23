@@ -16,7 +16,6 @@
 - import_playbook: playbooks/dovecot.yml
 - import_playbook: playbooks/nextcloud.yml
 - import_playbook: playbooks/wallabag.yml
-- import_playbook: playbooks/gitea.yml
 - import_playbook: playbooks/wordpress.yml
 - import_playbook: playbooks/nginx.yml
 - import_playbook: playbooks/certbot-webroot.yml
