@@ -8,22 +8,6 @@ resource "ovh_domain_zone_record" "bastion_priv" {
   target    = scaleway_instance_server.bastion.private_ip
 }
 
-resource "ovh_domain_zone_record" "gitea_priv" {
-  zone      = "karolak.fr"
-  subdomain = "gitea.priv"
-  fieldtype = "A"
-  ttl       = "60"
-  target    = scaleway_instance_server.gitea.private_ip
-}
-
-resource "ovh_domain_zone_record" "imap_priv" {
-  zone      = "karolak.fr"
-  subdomain = "imap.priv"
-  fieldtype = "A"
-  ttl       = "60"
-  target    = scaleway_instance_server.imap.private_ip
-}
-
 resource "ovh_domain_zone_record" "lb_priv" {
   zone      = "karolak.fr"
   subdomain = "lb.priv"

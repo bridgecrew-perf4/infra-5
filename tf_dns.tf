@@ -120,7 +120,7 @@ resource "ovh_domain_zone_record" "imap" {
   subdomain = "imap"
   fieldtype = "A"
   ttl       = "3600"
-  target    = scaleway_instance_server.imap.public_ip
+  target    = module.imap_instance.ipv4
 }
 
 resource "ovh_domain_zone_record" "imap6" {
@@ -128,7 +128,7 @@ resource "ovh_domain_zone_record" "imap6" {
   subdomain = "imap"
   fieldtype = "AAAA"
   ttl       = "3600"
-  target    = scaleway_instance_server.imap.ipv6_address
+  target    = module.imap_instance.ipv6
 }
 
 resource "ovh_domain_zone_record" "lb" {

@@ -8,32 +8,20 @@ resource "scaleway_instance_server" "bastion" {
 
   ip_id       = scaleway_instance_ip.bastion.id
   enable_ipv6 = true
-
-  security_group_id = scaleway_instance_security_group.bastion.id
 }
 
-resource "scaleway_instance_server" "gitea" {
-  name  = "gitea"
-  type  = "START1-XS"
-  image = "debian_buster"
-  tags  = ["private"]
+module "grocy_instance" {
+  source = "./modules/scw-instance"
 
-  enable_dynamic_ip = true
-  enable_ipv6       = true
-
-  security_group_id = scaleway_instance_security_group.gitea.id
+  name = "grocy"
+  tags = ["private"]
 }
 
-resource "scaleway_instance_server" "imap" {
-  name  = "imap"
-  type  = "DEV1-S"
-  image = "debian_buster"
-  tags  = ["public"]
+module "imap_instance" {
+  source = "./modules/scw-instance"
 
-  enable_dynamic_ip = true
-  enable_ipv6       = true
-
-  security_group_id = scaleway_instance_security_group.imap.id
+  name = "imap"
+  tags = ["public"]
 }
 
 resource "scaleway_instance_server" "lb" {
@@ -44,8 +32,6 @@ resource "scaleway_instance_server" "lb" {
 
   ip_id       = scaleway_instance_ip.lb.id
   enable_ipv6 = true
-
-  security_group_id = scaleway_instance_security_group.lb.id
 }
 
 resource "scaleway_instance_server" "mariadb" {
@@ -56,8 +42,6 @@ resource "scaleway_instance_server" "mariadb" {
 
   enable_dynamic_ip = true
   enable_ipv6       = true
-
-  security_group_id = scaleway_instance_security_group.mariadb.id
 }
 
 resource "scaleway_instance_server" "nextcloud" {
@@ -68,8 +52,6 @@ resource "scaleway_instance_server" "nextcloud" {
 
   enable_dynamic_ip = true
   enable_ipv6       = true
-
-  security_group_id = scaleway_instance_security_group.nextcloud.id
 }
 
 resource "scaleway_instance_server" "postgresql" {
@@ -80,8 +62,6 @@ resource "scaleway_instance_server" "postgresql" {
 
   enable_dynamic_ip = true
   enable_ipv6       = true
-
-  security_group_id = scaleway_instance_security_group.postgresql.id
 }
 
 resource "scaleway_instance_server" "redis" {
@@ -92,8 +72,6 @@ resource "scaleway_instance_server" "redis" {
 
   enable_dynamic_ip = true
   enable_ipv6       = true
-
-  security_group_id = scaleway_instance_security_group.redis.id
 }
 
 resource "scaleway_instance_server" "smtp" {
@@ -104,8 +82,6 @@ resource "scaleway_instance_server" "smtp" {
 
   ip_id       = scaleway_instance_ip.smtp.id
   enable_ipv6 = false
-
-  security_group_id = scaleway_instance_security_group.smtp.id
 }
 
 resource "scaleway_instance_server" "wallabag" {
@@ -116,8 +92,6 @@ resource "scaleway_instance_server" "wallabag" {
 
   enable_dynamic_ip = true
   enable_ipv6       = true
-
-  security_group_id = scaleway_instance_security_group.wallabag.id
 }
 
 resource "scaleway_instance_server" "web" {
@@ -128,6 +102,4 @@ resource "scaleway_instance_server" "web" {
 
   enable_dynamic_ip = true
   enable_ipv6       = true
-
-  security_group_id = scaleway_instance_security_group.nextcloud.id
 }
