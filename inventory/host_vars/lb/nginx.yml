@@ -138,6 +138,26 @@ nginx_http:
         rewrite ^/assr/crypto-cours https://git.sr.ht/~nka/crypto-cours permanent;
         rewrite ^/ https://git.sr.ht/~nka permanent;
       }
+  - name: grocy
+    content: |
+      server {
+        listen 443 ssl http2;
+        listen [::]:443 ssl http2;
+        server_name grocy.karolak.fr;
+
+        include /etc/nginx/conf.d/snippet/tls.conf;
+        include /etc/nginx/conf.d/snippet/cert-karolak.conf;
+        include /etc/nginx/conf.d/snippet/acme-challenge.conf;
+
+        location / {
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+
+          proxy_pass http://{{ lookup('dig', 'grocy.priv.karolak.fr') }}/;
+        }
+      }
   - name: karolak-carrelage
     content: |
       server {
@@ -353,13 +373,4 @@ nginx_http:
 
           proxy_pass http://{{ lookup('dig', 'web.priv.karolak.fr') }}/;
         }
-      }
-
-nginx_stream:
-  - name: gitea
-    content: |
-      server {
-        listen 22;
-        listen [::]:22;
-        proxy_pass {{ lookup('dig', 'gitea.priv.karolak.fr') }}:22;
       }

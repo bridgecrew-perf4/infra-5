@@ -5,5 +5,5 @@ bkp_jobs:
     name: restic
     command: |
       restic snapshots &> /dev/null || restic init
-      restic backup /etc
+      restic backup /etc /var/www/grocy/data/config.php /var/www/grocy/data/grocy.db
       restic forget --prune --keep-daily 7 --keep-weekly 4

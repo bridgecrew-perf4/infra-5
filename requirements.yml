@@ -1,54 +1,73 @@
 ---
 
-- dependencies:
-    - name: backup
-      src: https://git.sr.ht/~nka/ansible-role-backup
-      version: v1.0.0
-    - name: certbot-ovh
-      src: https://git.sr.ht/~nka/ansible-role-certbot-ovh
-      version: v1.0.0
-    - name: certbot-webroot
-      src: https://git.sr.ht/~nka/ansible-role-certbot-webroot
-      version: v1.0.0
-    - name: dovecot
-      src: https://git.sr.ht/~nka/ansible-role-dovecot
-      version: v1.0.0
-    - name: ferm
-      src: https://git.sr.ht/~nka/ansible-role-ferm
-      version: v1.0.0
-    - name: mariadb
-      src: https://git.sr.ht/~nka/ansible-role-mariadb
-      version: v1.0.0
-    - name: netdata
-      src: https://git.sr.ht/~nka/ansible-role-netdata
-      version: v1.0.0
-    - name: nextcloud
-      src: https://git.sr.ht/~nka/ansible-role-nextcloud
-      version: v1.0.0
-    - name: nginx
-      src: https://git.sr.ht/~nka/ansible-role-nginx
-      version: v1.0.0
-    - name: postfix
-      src: https://git.sr.ht/~nka/ansible-role-postfix
-      version: v1.0.0
-    - name: postfixadmin
-      src: https://git.sr.ht/~nka/ansible-role-postfixadmin
-      version: v1.0.0
-    - name: postfix-relay
-      src: https://git.sr.ht/~nka/ansible-role-postfix-relay
-      version: v1.0.0
-    - name: postgresql
-      src: https://git.sr.ht/~nka/ansible-role-postgresql
-      version: v1.0.0
-    - name: redis
-      src: https://git.sr.ht/~nka/ansible-role-redis
-      version: v1.0.0
-    - name: rspamd
-      src: https://git.sr.ht/~nka/ansible-role-rspamd
-      version: v1.0.0
-    - name: wallabag
-      src: https://git.sr.ht/~nka/ansible-role-wallabag
-      version: v1.0.0
-    - name: wordpress
-      src: https://git.sr.ht/~nka/ansible-role-wordpress
-      version: v1.0.0
+- name: backup
+  src: git+https://git.sr.ht/~nka/ansible-role-backup
+  version: v1.0.0
+
+- name: certbot-ovh
+  src: git+https://git.sr.ht/~nka/ansible-role-certbot-ovh
+  version: v1.0.0
+
+- name: certbot-webroot
+  src: git+https://git.sr.ht/~nka/ansible-role-certbot-webroot
+  version: v1.0.0
+
+- name: dovecot
+  src: git+https://git.sr.ht/~nka/ansible-role-dovecot
+  version: v1.0.0
+
+- name: ferm
+  src: git+https://git.sr.ht/~nka/ansible-role-ferm
+  version: v1.0.0
+
+- name: grocy
+  src: git+https://git.sr.ht/~nka/ansible-role-grocy
+  version: v1.0.0
+
+- name: mariadb
+  src: git+https://git.sr.ht/~nka/ansible-role-mariadb
+  version: v1.0.1
+
+- name: netdata
+  src: git+https://git.sr.ht/~nka/ansible-role-netdata
+  version: v1.0.0
+
+- name: nextcloud
+  src: git+https://git.sr.ht/~nka/ansible-role-nextcloud
+  version: v1.0.0
+
+- name: nginx
+  src: git+https://git.sr.ht/~nka/ansible-role-nginx
+  version: v1.0.0
+
+- name: postfix
+  src: git+https://git.sr.ht/~nka/ansible-role-postfix
+  version: v1.0.0
+
+- name: postfixadmin
+  src: git+https://git.sr.ht/~nka/ansible-role-postfixadmin
+  version: v1.0.0
+
+- name: postfix-relay
+  src: git+https://git.sr.ht/~nka/ansible-role-postfix-relay
+  version: v1.0.0
+
+- name: postgresql
+  src: git+https://git.sr.ht/~nka/ansible-role-postgresql
+  version: v1.0.0
+
+- name: redis
+  src: git+https://git.sr.ht/~nka/ansible-role-redis
+  version: v1.0.0
+
+- name: rspamd
+  src: git+https://git.sr.ht/~nka/ansible-role-rspamd
+  version: v1.0.0
+
+- name: wallabag
+  src: git+https://git.sr.ht/~nka/ansible-role-wallabag
+  version: v1.0.0
+
+- name: wordpress
+  src: git+https://git.sr.ht/~nka/ansible-role-wordpress
+  version: v1.0.1

@@ -107,6 +107,14 @@ resource "ovh_domain_zone_record" "git" {
   target    = ovh_domain_zone_record.lb.subdomain
 }
 
+resource "ovh_domain_zone_record" "grocy" {
+  zone      = "karolak.fr"
+  subdomain = "grocy"
+  fieldtype = "CNAME"
+  ttl       = "3600"
+  target    = ovh_domain_zone_record.lb.subdomain
+}
+
 resource "ovh_domain_zone_record" "home" {
   zone      = "karolak.fr"
   subdomain = "home"
