@@ -1,6 +1,7 @@
 # temporary directories and files
 .terraform/
 tfplan
+roles/
 
 # secrets
 ovh.conf
