@@ -1,14 +1,5 @@
 ---
 
-ansible_port: 222
-
-certbot_domains:
-  - 'karolak.fr'
-  - '*.karolak.fr'
-
-certbot_wr_domains:
-  - 'cloud.maison-people.com'
-
 nginx_snippet:
   - name: acme-challenge
     content: |

@@ -1,0 +1,4 @@
+---
+
+certbot_domains:
+  - imap.karolak.fr

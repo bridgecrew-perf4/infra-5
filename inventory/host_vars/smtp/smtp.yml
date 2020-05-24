@@ -1,9 +1,5 @@
 ---
 
-certbot_domains:
-  - mail.karolak.fr
-  - smtp.karolak.fr
-
 smtp_db_host: "{{ lookup('dig', 'postgresql.priv.karolak.fr') }}"
 smtp_db_password: "{{ vault_smtp_db_password }}"
 smtp_host_domain: karolak.fr

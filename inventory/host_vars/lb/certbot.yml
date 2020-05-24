@@ -1,0 +1,8 @@
+---
+
+certbot_domains:
+  - 'karolak.fr'
+  - '*.karolak.fr'
+
+certbot_wr_domains:
+  - 'cloud.maison-people.com'
