@@ -1,6 +1,8 @@
 ---
 
 bkp_jobs:
+  - name: databases
+    type: pgsql
   - type: sh
     name: wallabag
     command: |
@@ -11,5 +13,5 @@ bkp_jobs:
     name: restic
     command: |
       restic snapshots &> /dev/null || restic init
-      restic backup /etc /var/www/wallabag /var/backups/wallabag
+      restic backup /etc /var/www/wallabag /var/backups/wallabag /var/backups/postgres
       restic forget --prune --keep-daily 7 --keep-weekly 4

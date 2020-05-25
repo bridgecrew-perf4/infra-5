@@ -2,7 +2,7 @@
 ---
 
 - name: IMAP SERVER
-  hosts: imap
+  hosts: imap:imap_server
   roles:
     - dovecot
 

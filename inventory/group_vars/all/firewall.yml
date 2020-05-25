@@ -2,13 +2,16 @@
 
 ferm_antilockout_enabled: false
 
-ferm_input_rule_bastion:
-    saddr:
-      - "{{ lookup('dig', 'bastion.priv.karolak.fr') }}"
-    proto:
-      - tcp
-    dport:
-      - 22
+ferm_input_log: false
+ferm_forward_log: false
+
+ferm_input_rule_ssh:
+  saddr:
+    - "{{ lookup('dig', 'home.karolak.fr') }}"
+  proto:
+    - tcp
+  dport:
+    - 22
 
 ferm_input_rule_netdata:
   saddr:

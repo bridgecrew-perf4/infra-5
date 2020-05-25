@@ -6,3 +6,4 @@ certbot_domains:
 
 certbot_wr_domains:
   - 'cloud.maison-people.com'
+  - 'mail.maison-people.com'

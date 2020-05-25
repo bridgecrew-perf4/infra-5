@@ -4,6 +4,4 @@ plugin: scaleway
 hostnames:
   - hostname
 variables:
-  ansible_host: private_ip
-
-...
+  ansible_host: public_ip.address

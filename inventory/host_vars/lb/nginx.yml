@@ -178,6 +178,46 @@ nginx_http:
           proxy_pass http://{{ lookup('dig', 'web.priv.karolak.fr') }}/;
         }
       }
+  - name: roundcube
+    content: |
+      server {
+        listen 443 ssl http2;
+        listen [::]:443 ssl http2;
+        server_name mail.karolak.fr;
+
+        include /etc/nginx/conf.d/snippet/tls.conf;
+        include /etc/nginx/conf.d/snippet/cert-karolak.conf;
+        include /etc/nginx/conf.d/snippet/acme-challenge.conf;
+
+        location / {
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+
+          proxy_pass http://{{ lookup('dig', 'smtp.priv.karolak.fr') }}/;
+        }
+      }
+  - name: roundcube-people
+    content: |
+      server {
+        listen 443 ssl http2;
+        listen [::]:443 ssl http2;
+        server_name mail.maison-people.com;
+
+        include /etc/nginx/conf.d/snippet/tls.conf;
+        include /etc/nginx/conf.d/snippet/cert-people.conf;
+        include /etc/nginx/conf.d/snippet/acme-challenge.conf;
+
+        location / {
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+
+          proxy_pass http://{{ lookup('dig', 'smtp.priv.karolak.fr') }}/;
+        }
+      }
   - name: netdata
     content: |
       server {

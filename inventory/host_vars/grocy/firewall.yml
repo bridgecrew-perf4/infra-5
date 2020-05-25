@@ -2,7 +2,7 @@
 
 ferm_input_rules:
   - "{{ ferm_input_rule_netdata }}"
-  - "{{ ferm_input_rule_bastion }}"
+  - "{{ ferm_input_rule_ssh }}"
   - saddr:
       - "{{ lookup('dig', 'lb.priv.karolak.fr') }}"
     proto:

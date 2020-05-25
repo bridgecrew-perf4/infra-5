@@ -1,16 +1,10 @@
 ---
 
 ferm_input_rules:
+  - "{{ ferm_input_rule_ssh }}"
   - "{{ ferm_input_rule_netdata }}"
-  - saddr:
-      - "{{ lookup('dig', 'bastion.priv.karolak.fr') }}"
-    proto:
-      - tcp
-    dport:
-      - 222
   - proto:
       - tcp
     dport:
-      - 22
       - 80
       - 443

@@ -13,6 +13,7 @@
 - import_playbook: playbooks/rspamd.yml
 - import_playbook: playbooks/certbot-ovh.yml
 - import_playbook: playbooks/postfix.yml
+- import_playbook: playbooks/postfixadmin.yml
 - import_playbook: playbooks/dovecot.yml
 - import_playbook: playbooks/nextcloud.yml
 - import_playbook: playbooks/wallabag.yml

@@ -16,7 +16,6 @@ nc_apps:
   - user_external
 
 nc_db_admin_password: "{{ vault_pg_password }}"
-nc_db_host: "{{ lookup('dig', 'postgresql.priv.karolak.fr') }}"
 nc_db_user_password: "{{ vault_nc_db_user_password }}"
 
 nc_domains:
@@ -28,7 +27,7 @@ nc_config:
     activity_expire_days: 30
     datadirectory: "{{ nc_data_path }}"
     dbtype: pgsql
-    dbhost: "{{ nc_db_host }}"
+    dbhost: 'localhost'
     dbport: 5432
     dbuser: nextcloud
     dbpassword: "{{ vault_nc_db_user_password }}"
@@ -65,10 +64,8 @@ nc_config:
     overwrite.cli.url: https://{{ nc_domains[0] }}
     overwriteprotocol: https
     redis:
-      host: redis.priv.karolak.fr
+      host: localhost
       port: 6379
-      dbindex: 0
-      password: "{{ vault_redis_password }}"
     skeletondirectory: ""
     trashbin_retention_obligation: auto, 3
     trusted_domains: "{{ nc_domains }}"

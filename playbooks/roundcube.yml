@@ -1,9 +1,9 @@
 #!/usr/bin/env ansible-playbook
 ---
 
-- name: POSTFIXADMIN
+- name: ROUNDCUBE
   hosts: mail:smtp
   roles:
-    - postfixadmin
+    - roundcube
 
 ...

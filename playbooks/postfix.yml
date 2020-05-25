@@ -2,7 +2,7 @@
 ---
 
 - name: SMTP SERVER
-  hosts: smtp
+  hosts: smtp:smtp_server
   roles:
     - postfix
 

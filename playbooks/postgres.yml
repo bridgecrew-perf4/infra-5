@@ -2,7 +2,7 @@
 ---
 
 - name: POSTGRES SERVER
-  hosts: postgresql
+  hosts: postgresql:postgresql_server
   roles:
     - postgresql
 

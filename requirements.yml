@@ -42,7 +42,7 @@
 
 - name: postfix
   src: git+https://git.sr.ht/~nka/ansible-role-postfix
-  version: v1.0.0
+  version: v1.0.1
 
 - name: postfixadmin
   src: git+https://git.sr.ht/~nka/ansible-role-postfixadmin
@@ -60,9 +60,13 @@
   src: git+https://git.sr.ht/~nka/ansible-role-redis
   version: v1.0.0
 
+- name: roundcube
+  src: git+https://git.sr.ht/~nka/ansible-role-roundcube
+  version: v1.0.0
+
 - name: rspamd
   src: git+https://git.sr.ht/~nka/ansible-role-rspamd
-  version: v1.0.0
+  version: v1.0.1
 
 - name: wallabag
   src: git+https://git.sr.ht/~nka/ansible-role-wallabag

@@ -2,7 +2,7 @@
 ---
 
 - name: POSTFIX RELAY
-  hosts: all:!smtp
+  hosts: all:!smtp:!mail
   roles:
     - postfix-relay
 

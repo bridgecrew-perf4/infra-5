@@ -3,34 +3,34 @@ variable "name" {
   type        = string
 }
 
-variable "instance_type" {
+variable "type" {
   description = "Server instance type."
   type        = string
   default     = "DEV1-S"
 }
 
-variable "instance_image" {
+variable "image" {
   description = "Server instance image."
   type        = string
   default     = "debian_buster"
 }
 
-variable "instance_ipv4_id" {
+variable "ipv4_id" {
   description = "Enable server instance public IPv4 resource."
   type        = string
   default     = null
 }
 
-variable "instance_ipv4" {
+variable "ipv4" {
   description = "Enable server instance public IPv4."
   type        = bool
   default     = true
 }
 
-variable "instance_ipv6" {
+variable "ipv6" {
   description = "Enable server instance public IPv6."
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "tags" {
@@ -39,7 +39,7 @@ variable "tags" {
   default     = []
 }
 
-variable "dns_zone" {
+variable "zone" {
   description = "Private DNS zone."
   type        = string
   default     = "karolak.fr"

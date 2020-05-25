@@ -4,6 +4,11 @@ SHELL := /bin/bash
 ## TARGET: DESCRIPTION: ARGS
 all: help
 
+.PHONY: init
+## init: Initialize terraform providers and modules
+init:
+	terraform init
+
 .PHONY: plan
 ## plan: Generate a terraform plan
 plan:

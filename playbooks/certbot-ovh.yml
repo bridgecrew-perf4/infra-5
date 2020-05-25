@@ -2,7 +2,7 @@
 ---
 
 - name: CERTBOT OVH
-  hosts: lb:smtp:imap
+  hosts: lb:smtp:imap:mail
   roles:
     - certbot-ovh
 

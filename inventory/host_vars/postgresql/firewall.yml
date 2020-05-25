@@ -1,7 +1,7 @@
 ---
 
 ferm_input_rules:
-  - "{{ ferm_input_rule_bastion }}"
+  - "{{ ferm_input_rule_ssh }}"
   - "{{ ferm_input_rule_netdata }}"
   - saddr:
       - "{{ lookup('dig', 'imap.priv.karolak.fr') }}"

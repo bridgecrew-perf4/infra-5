@@ -1,9 +1,12 @@
 ---
 
 bkp_jobs:
+  - type: mysql
+    name: databases
   - name: restic
+    priority: 20
     type: sh
     command: |
       restic snapshots &> /dev/null || restic init
-      restic backup /etc /var/www
+      restic backup /etc /var/www /var/backups/mysql
       restic forget --prune --keep-daily 7 --keep-weekly 4

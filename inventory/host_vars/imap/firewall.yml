@@ -1,7 +1,7 @@
 ---
 
 ferm_input_rules:
-  - "{{ ferm_input_rule_bastion }}"
+  - "{{ ferm_input_rule_ssh }}"
   - "{{ ferm_input_rule_netdata }}"
   # lmtp
   - saddr:
@@ -10,11 +10,6 @@ ferm_input_rules:
       - tcp
     dport:
       - 24
-  # dovecot
-  - proto:
-      - tcp
-    dport:
-      - 993
   # dovecot-sasl
   - saddr:
       - "{{ lookup('dig', 'smtp.priv.karolak.fr') }}"
@@ -22,8 +17,3 @@ ferm_input_rules:
       - tcp
     dport:
       - 1993
-  # sieve
-  - proto:
-      - tcp
-    dport:
-      - 4190

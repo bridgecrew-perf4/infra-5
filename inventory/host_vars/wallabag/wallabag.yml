@@ -1,7 +1,6 @@
 ---
 
 bag_db_admin_password: "{{ vault_bag_db_admin_password }}"
-bag_db_host: "{{ lookup('dig', 'postgresql.priv.karolak.fr') }}"
 bag_db_user_password: "{{ vault_bag_db_user_password }}"
 
 bag_domain_name: bag.karolak.fr
@@ -9,9 +8,6 @@ bag_domain_name: bag.karolak.fr
 bag_locale: fr
 
 bag_secret: "{{ vault_bag_secret }}"
-
-bag_redis_host: "{{ lookup('dig', 'redis.priv.karolak.fr') }}"
-bag_redis_password: "{{ vault_redis_password }}"
 
 bag_smtp_host: smtp.karolak.fr
 bag_smtp_password: "{{ vault_relay_password }}"
