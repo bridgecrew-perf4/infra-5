@@ -14,7 +14,7 @@
 
 - name: dovecot
   src: git+https://git.sr.ht/~nka/ansible-role-dovecot
-  version: v1.0.0
+  version: v1.0.1
 
 - name: ferm
   src: git+https://git.sr.ht/~nka/ansible-role-ferm
