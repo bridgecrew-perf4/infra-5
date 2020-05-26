@@ -9,6 +9,14 @@ resource "scaleway_instance_server" "server" {
   enable_ipv6       = var.ipv6 ? true : false
 }
 
+resource "ovh_domain_zone_record" "pub" {
+  zone      = var.zone
+  subdomain = format("%s.pub", var.name)
+  fieldtype = "A"
+  ttl       = "60"
+  target    = scaleway_instance_server.server.public_ip
+}
+
 resource "ovh_domain_zone_record" "priv" {
   zone      = var.zone
   subdomain = format("%s.priv", var.name)
