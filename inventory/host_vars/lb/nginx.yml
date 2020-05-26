@@ -335,11 +335,6 @@ nginx_http:
           proxy_set_header X-Forwarded-Proto $scheme;
 
           proxy_pass http://{{ lookup('dig', 'smtp.priv.karolak.fr') }}/;
-
-          # home
-          allow 109.15.54.71;
-
-          deny all;
         }
       }
   - name: rspamd
