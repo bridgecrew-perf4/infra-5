@@ -7,13 +7,15 @@ nc_apps:
   - circles
   - contacts
   - groupfolders
-  - mail
-  - music
   - news
   - notes
-  - spreed
   - tasks
   - user_external
+
+nc_remove_apps:
+  - mail
+  - music
+  - spreed
 
 nc_db_admin_password: "{{ vault_pg_password }}"
 nc_db_user_password: "{{ vault_nc_db_user_password }}"
