@@ -18,7 +18,7 @@
 
 - name: ferm
   src: git+https://git.sr.ht/~nka/ansible-role-ferm
-  version: v1.0.0
+  version: v1.1.0
 
 - name: grocy
   src: git+https://git.sr.ht/~nka/ansible-role-grocy
