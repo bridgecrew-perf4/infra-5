@@ -58,3 +58,10 @@ module "web_instance" {
   name   = "web"
   tags   = ["mariadb", "private", "redis"]
 }
+
+module "workstation_instance" {
+  source = "./modules/scw-instance"
+  name   = "workstation"
+  tags   = ["private"]
+  ipv6   = true
+}

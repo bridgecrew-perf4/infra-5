@@ -1,0 +1,12 @@
+---
+
+ferm_input_rules:
+  - "{{ ferm_input_rule_netdata }}"
+  - content: |
+      proto tcp dport 22 {
+        mod state state NEW mod recent name SSH {
+          set NOP;
+          update seconds 120 hitcount 8 rttl DROP;
+        }
+        ACCEPT;
+      }

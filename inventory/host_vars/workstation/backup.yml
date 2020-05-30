@@ -1,0 +1,9 @@
+---
+
+bkp_jobs:
+  - name: restic
+    type: sh
+    command: |
+      restic snapshots &> /dev/null || restic init
+      restic backup /home
+      restic forget --prune --keep-daily 7 --keep-weekly 4
