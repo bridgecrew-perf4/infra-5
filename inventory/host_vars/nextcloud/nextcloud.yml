@@ -4,7 +4,6 @@ nc_admin_password: "{{ vault_nc_admin_password }}"
 
 nc_apps:
   - calendar
-  - circles
   - contacts
   - groupfolders
   - news
@@ -12,10 +11,11 @@ nc_apps:
   - tasks
   - user_external
 
-nc_remove_apps:
-  - mail
-  - music
-  - spreed
+nc_disable_apps:
+  - activity
+  - photos
+
+nc_remove_apps: []
 
 nc_db_admin_password: "{{ vault_pg_password }}"
 nc_db_user_password: "{{ vault_nc_db_user_password }}"
