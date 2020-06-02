@@ -8,6 +8,8 @@ ferm_forward_log: false
 ferm_input_rule_ssh:
   saddr:
     - "{{ lookup('dig', 'home.karolak.fr') }}"
+    - "{{ lookup('dig', 'workstation.priv.karolak.fr') }}"
+    - "{{ lookup('dig', 'workstation.pub.karolak.fr') }}"
     - '193.50.159.12'
   proto:
     - tcp
