@@ -18,7 +18,7 @@ RUN \
     sudo rm -rf /var/lib/apt/lists/* &&  \
     :
 
-ENV ANSIBLE_VERSION 2.9.7
+ENV ANSIBLE_VERSION 2.9.9
 ENV ANSIBLE_LINT_VERSION 4.2.0
 RUN \
     python3 -m pip install --user \
@@ -27,11 +27,12 @@ RUN \
         ansible-lint==${ANSIBLE_LINT_VERSION} \
         bcrypt \
         dnspython \
+        netaddr \
         passlib \
         && \
     :
 
-ENV TERRAFORM_VERSION 0.12.24
+ENV TERRAFORM_VERSION 0.12.26
 RUN \
     # terraform
     # import hashicorp gpg key
@@ -45,7 +46,7 @@ RUN \
     sudo rm -f terraform_${TERRAFORM_VERSION}* && \
     :
 
-ENV TFLINT_VERSION 0.15.5
+ENV TFLINT_VERSION 0.16.1
 RUN \
     # tflint
     sudo curl -LOSs https://github.com/terraform-linters/tflint/releases/download/v${TFLINT_VERSION}/tflint_linux_amd64.zip && \
