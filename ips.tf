@@ -3,7 +3,7 @@
 module "lb_ip" {
   source  = "./modules/scw-ip"
   name    = "lb"
-  aliases = ["bag", "blog", "cloud", "crypto", "git", "grocy", "mail", "ndata", "pfa", "rspamd", "wedding", "www"]
+  aliases = ["bag", "blog", "cloud", "crypto", "git", "grocy", "mail", "ndata", "pfa", "rspamd", "rssbr", "wedding", "www"]
 }
 
 module "mail_ip" {

@@ -1,0 +1,19 @@
+---
+
+rssbr_bridges:
+  - 'Basta'
+  - 'Facebook'
+  - 'FuturaSciences'
+  - 'Instagram'
+  - 'Mastodon'
+  - 'Mediapart'
+  - 'MediapartBlogs'
+  - 'MondeDiplo'
+  - 'Pinterest'
+  - 'Twitter'
+  - 'Wikipedia'
+  - 'Wordpress'
+  - 'Youtube'
+rssbr_domain: 'rssbr.karolak.fr'
+rssbr_trusted_proxies:
+  - "{{ lookup('dig', 'lb.priv.karolak.fr.') }}"

@@ -68,6 +68,10 @@
   src: git+https://git.sr.ht/~nka/ansible-role-rspamd
   version: v1.0.1
 
+- name: rssbridge
+  src: git+https://git.sr.ht/~nka/ansible-role-rssbridge
+  version: v1.0.0
+
 - name: wallabag
   src: git+https://git.sr.ht/~nka/ansible-role-wallabag
   version: v1.0.0

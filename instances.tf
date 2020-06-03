@@ -36,7 +36,7 @@ module "lb_instance" {
 module "nextcloud_instance" {
   source = "./modules/scw-instance"
   name   = "nextcloud"
-  tags   = ["postgresql_server", "private", "redis"]
+  tags   = ["postgresql_server", "private", "redis", "rssbridge"]
 }
 
 module "smtp_instance" {
