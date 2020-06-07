@@ -19,6 +19,11 @@ plan:
 apply:
 	terraform apply tfplan
 
+.PHONY: requirements
+## requirements: Update ansible roles
+requirements:
+	ansible-galaxy role install -r requirements.yml -f
+
 .PHONY: encrypt
 ## encrypt: Encrypt string with ansible-vault : string=<string-to-encrypt>
 encrypt:
