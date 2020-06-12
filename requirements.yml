@@ -42,7 +42,7 @@
 
 - name: postfix
   src: git+https://git.sr.ht/~nka/ansible-role-postfix
-  version: v1.1.1
+  version: v1.1.2
 
 - name: postfixadmin
   src: git+https://git.sr.ht/~nka/ansible-role-postfixadmin
