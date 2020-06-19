@@ -34,7 +34,7 @@
 
 - name: nextcloud
   src: git+https://git.sr.ht/~nka/ansible-role-nextcloud
-  version: v1.1.1
+  version: v1.1.2
 
 - name: nginx
   src: git+https://git.sr.ht/~nka/ansible-role-nginx
