@@ -18,7 +18,7 @@ RUN \
     sudo rm -rf /var/lib/apt/lists/* &&  \
     :
 
-ENV ANSIBLE_VERSION 2.9.9
+ENV ANSIBLE_VERSION 2.9.10
 ENV ANSIBLE_LINT_VERSION 4.2.0
 RUN \
     python3 -m pip install --user \
