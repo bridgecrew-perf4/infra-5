@@ -1,0 +1,7 @@
+[Unit]
+Description=rss2email job
+
+[Service]
+User={{ r2e_username }}
+Group={{ r2e_groupname }}
+ExecStart={{ r2e_virtualenv }}/bin/r2e run
