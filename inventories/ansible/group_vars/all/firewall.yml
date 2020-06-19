@@ -11,6 +11,7 @@ ferm_input_rule_ssh:
     - "{{ lookup('dig', 'workstation.priv.karolak.fr') }}"
     - "{{ lookup('dig', 'workstation.pub.karolak.fr') }}"
     - '193.50.159.12'
+    - '193.50.159.53'
   proto:
     - tcp
   dport:
