@@ -68,6 +68,10 @@
   src: git+https://git.sr.ht/~nka/ansible-role-rspamd
   version: v1.0.1
 
+- name: rss2email
+  src: git+https://git.sr.ht/~nka/ansible-role-rss2email
+  version: v1.0.0
+
 - name: rssbridge
   src: git+https://git.sr.ht/~nka/ansible-role-rssbridge
   version: v1.0.0

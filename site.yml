@@ -16,6 +16,7 @@
 - import_playbook: playbooks/postfixadmin.yml
 - import_playbook: playbooks/dovecot.yml
 - import_playbook: playbooks/nextcloud.yml
+- import_playbook: playbooks/rss2email.yml
 - import_playbook: playbooks/wallabag.yml
 - import_playbook: playbooks/wordpress.yml
 - import_playbook: playbooks/nginx.yml
