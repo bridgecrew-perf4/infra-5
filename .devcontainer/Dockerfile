@@ -11,6 +11,8 @@ RUN \
         libffi-dev \
         libssl-dev \
         dnsutils \
+        # pyinfra
+        python3-dev \
         && \
     # clean up
     sudo apt-get autoremove -y && \
@@ -29,6 +31,15 @@ RUN \
         dnspython \
         netaddr \
         passlib \
+        # pyinfra
+        flake8 \
+        flake8-commas \
+        flake8-docstrings \
+        flake8-import-order \
+        flake8-quotes \
+        flake8-spellcheck \
+        pyinfra \
+        pylint \
         && \
     :
 

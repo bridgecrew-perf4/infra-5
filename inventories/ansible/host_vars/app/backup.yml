@@ -8,5 +8,12 @@ bkp_jobs:
     name: restic
     command: |
       restic snapshots &> /dev/null || restic init
-      restic backup /etc /var/www /var/backups/postgres
+      restic backup \
+        /etc \
+        /var/backups/postgres \
+        /var/run/rss2email \
+        /var/www \
+        /var/www/grocy/data/config.php \
+        /var/www/grocy/data/grocy.db \
+        /var/www/wallabag
       restic forget --prune --keep-daily 7 --keep-weekly 4

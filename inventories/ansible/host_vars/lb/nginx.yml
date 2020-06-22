@@ -85,6 +85,14 @@ nginx_http:
         include /etc/nginx/conf.d/snippet/cert-karolak.conf;
         include /etc/nginx/conf.d/snippet/acme-challenge.conf;
 
+        location /blog/feed {
+          return 301 $scheme://$host/feed/;
+        }
+
+        location /feeds/all.atom.xml {
+          return 301 $scheme://$host/feed/;
+        }
+
         location /index.xml {
           return 301 $scheme://$host/feed/;
         }
@@ -155,7 +163,7 @@ nginx_http:
           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
           proxy_set_header X-Forwarded-Proto $scheme;
 
-          proxy_pass http://{{ lookup('dig', 'grocy.priv.karolak.fr') }}/;
+          proxy_pass http://{{ lookup('dig', 'app.priv.karolak.fr') }}/;
         }
       }
   - name: karolak-carrelage
@@ -276,7 +284,7 @@ nginx_http:
           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
           proxy_set_header X-Forwarded-Proto $scheme;
 
-          proxy_pass http://{{ lookup('dig', 'nextcloud.priv.karolak.fr') }}/;
+          proxy_pass http://{{ lookup('dig', 'app.priv.karolak.fr') }}/;
         }
 
         location = /.well-known/carddav {
@@ -305,7 +313,7 @@ nginx_http:
           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
           proxy_set_header X-Forwarded-Proto $scheme;
 
-          proxy_pass http://{{ lookup('dig', 'nextcloud.priv.karolak.fr') }}/;
+          proxy_pass http://{{ lookup('dig', 'app.priv.karolak.fr') }}/;
         }
 
         location = /.well-known/carddav {
@@ -384,7 +392,7 @@ nginx_http:
           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
           proxy_set_header X-Forwarded-Proto $scheme;
 
-          proxy_pass http://{{ lookup('dig', 'nextcloud.priv.karolak.fr') }}/;
+          proxy_pass http://{{ lookup('dig', 'app.priv.karolak.fr') }}/;
         }
       }
   - name: wallabag
@@ -405,7 +413,7 @@ nginx_http:
           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
           proxy_set_header X-Forwarded-Proto $scheme;
 
-          proxy_pass http://{{ lookup('dig', 'wallabag.priv.karolak.fr') }}/;
+          proxy_pass http://{{ lookup('dig', 'app.priv.karolak.fr') }}/;
         }
       }
   - name: wedding
