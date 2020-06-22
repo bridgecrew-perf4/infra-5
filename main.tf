@@ -25,12 +25,6 @@ module "app_instance" {
   tags   = ["grocy", "nextcloud", "postgresql_server", "private", "redis", "rssbridge", "wallabag"]
 }
 
-module "grocy_instance" {
-  source = "./modules/scw-instance"
-  name   = "grocy"
-  tags   = ["private"]
-}
-
 module "lb_instance" {
   source  = "./modules/scw-instance"
   name    = "lb"
@@ -45,12 +39,6 @@ module "smtp_instance" {
   type    = "START1-XS"
   tags    = ["imap", "postgresql_server", "public", "redis", "rspamd"]
   ipv4_id = module.mail_ip.id
-}
-
-module "wallabag_instance" {
-  source = "./modules/scw-instance"
-  name   = "wallabag"
-  tags   = ["postgresql_server", "private", "redis"]
 }
 
 module "web_instance" {

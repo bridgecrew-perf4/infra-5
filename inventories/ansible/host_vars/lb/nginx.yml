@@ -163,7 +163,7 @@ nginx_http:
           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
           proxy_set_header X-Forwarded-Proto $scheme;
 
-          proxy_pass http://{{ lookup('dig', 'grocy.priv.karolak.fr') }}/;
+          proxy_pass http://{{ lookup('dig', 'app.priv.karolak.fr') }}/;
         }
       }
   - name: karolak-carrelage
@@ -284,7 +284,7 @@ nginx_http:
           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
           proxy_set_header X-Forwarded-Proto $scheme;
 
-          proxy_pass http://{{ lookup('dig', 'nextcloud.priv.karolak.fr') }}/;
+          proxy_pass http://{{ lookup('dig', 'app.priv.karolak.fr') }}/;
         }
 
         location = /.well-known/carddav {
@@ -313,7 +313,7 @@ nginx_http:
           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
           proxy_set_header X-Forwarded-Proto $scheme;
 
-          proxy_pass http://{{ lookup('dig', 'nextcloud.priv.karolak.fr') }}/;
+          proxy_pass http://{{ lookup('dig', 'app.priv.karolak.fr') }}/;
         }
 
         location = /.well-known/carddav {
@@ -392,7 +392,7 @@ nginx_http:
           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
           proxy_set_header X-Forwarded-Proto $scheme;
 
-          proxy_pass http://{{ lookup('dig', 'nextcloud.priv.karolak.fr') }}/;
+          proxy_pass http://{{ lookup('dig', 'app.priv.karolak.fr') }}/;
         }
       }
   - name: wallabag
@@ -413,7 +413,7 @@ nginx_http:
           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
           proxy_set_header X-Forwarded-Proto $scheme;
 
-          proxy_pass http://{{ lookup('dig', 'wallabag.priv.karolak.fr') }}/;
+          proxy_pass http://{{ lookup('dig', 'app.priv.karolak.fr') }}/;
         }
       }
   - name: wedding

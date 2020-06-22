@@ -1,9 +1,0 @@
----
-
-bkp_jobs:
-  - type: sh
-    name: restic
-    command: |
-      restic snapshots &> /dev/null || restic init
-      restic backup /etc /var/mail
-      restic forget --prune --keep-daily 7 --keep-weekly 4
