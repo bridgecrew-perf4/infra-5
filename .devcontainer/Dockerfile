@@ -32,7 +32,14 @@ RUN \
         netaddr \
         passlib \
         # pyinfra
+        flake8 \
+        flake8-commas \
+        flake8-docstrings \
+        flake8-import-order \
+        flake8-quotes \
+        flake8-spellcheck \
         pyinfra \
+        pylint \
         && \
     :
 
