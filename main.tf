@@ -117,7 +117,7 @@ resource "ovh_domain_zone_record" "home" {
   subdomain = "home"
   fieldtype = "A"
   ttl       = "3600"
-  target    = "109.15.54.71"
+  target    = "109.15.68.39"
 }
 
 resource "ovh_domain_zone_record" "mx" {
