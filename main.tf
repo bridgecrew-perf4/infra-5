@@ -109,7 +109,7 @@ resource "ovh_domain_zone_record" "dmarc" {
   subdomain = "_dmarc"
   fieldtype = "TXT"
   ttl       = "600"
-  target    = "v=DMARC1; p=none; adkim=r; aspf=r;"
+  target    = "v=DMARC1; p=none; sp=none; pct=100; adkim=r; aspf=r; fo=1; ruf=mailto:postmaster+dmarc@karolak.fr; rua=mailto:re+zmzfjvcp9be@dmarc.postmarkapp.com;"
 }
 
 resource "ovh_domain_zone_record" "home" {
