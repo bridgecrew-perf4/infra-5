@@ -85,8 +85,8 @@ nginx_http:
         include /etc/nginx/conf.d/snippet/cert-karolak.conf;
         include /etc/nginx/conf.d/snippet/acme-challenge.conf;
 
-        location /blog/feed {
-          return 301 $scheme://$host/feed/;
+        location /blog/ {
+          return 301 $scheme://$host/;
         }
 
         location /feeds/all.atom.xml {
