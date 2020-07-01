@@ -44,7 +44,7 @@ module "smtp_instance" {
 module "web_instance" {
   source = "./modules/scw-instance"
   name   = "web"
-  tags   = ["mariadb", "private", "redis"]
+  tags   = ["private"]
 }
 
 # IP

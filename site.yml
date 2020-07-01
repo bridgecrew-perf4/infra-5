@@ -8,7 +8,6 @@
 - import_playbook: playbooks/postfix-relay.yml
 - import_playbook: playbooks/netdata.yml
 - import_playbook: playbooks/postgres.yml
-- import_playbook: playbooks/mariadb.yml
 - import_playbook: playbooks/redis.yml
 - import_playbook: playbooks/rspamd.yml
 - import_playbook: playbooks/certbot-ovh.yml
@@ -18,7 +17,6 @@
 - import_playbook: playbooks/nextcloud.yml
 - import_playbook: playbooks/rss2email.yml
 - import_playbook: playbooks/wallabag.yml
-- import_playbook: playbooks/wordpress.yml
 - import_playbook: playbooks/nginx.yml
 - import_playbook: playbooks/certbot-webroot.yml
 
