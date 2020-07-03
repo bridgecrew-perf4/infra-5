@@ -257,7 +257,7 @@ nginx_http:
           gzip_types *;
 
           # home
-          allow 109.15.54.71;
+          allow {{ lookup('dig', 'home.karolak.fr') }};
 
           deny all;
         }
@@ -366,11 +366,7 @@ nginx_http:
           proxy_pass http://{{ lookup('dig', 'smtp.priv.karolak.fr') }}:11334/;
 
           # home
-          allow 109.15.68.167;
-          allow 109.15.54.71;
-          # vpn
-          allow 163.172.132.142;
-          allow 2001:bc8:47a8:185f::1;
+          allow {{ lookup('dig', 'home.karolak.fr') }};
 
           deny all;
         }
