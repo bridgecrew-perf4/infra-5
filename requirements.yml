@@ -62,7 +62,7 @@
 
 - name: roundcube
   src: git+https://git.sr.ht/~nka/ansible-role-roundcube
-  version: v1.0.1
+  version: v1.0.2
 
 - name: rspamd
   src: git+https://git.sr.ht/~nka/ansible-role-rspamd
