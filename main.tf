@@ -52,7 +52,7 @@ module "web_instance" {
 module "lb_ip" {
   source  = "./modules/scw-ip"
   name    = "lb"
-  aliases = ["bag", "blog", "blog2", "cloud", "crypto", "git", "grocy", "mail", "ndata", "pfa", "rspamd", "rssbr", "wedding", "www"]
+  aliases = ["bag", "blog", "cloud", "crypto", "cv", "git", "grocy", "mail", "ndata", "pfa", "rspamd", "rssbr", "wedding", "www"]
 }
 
 module "mail_ip" {
