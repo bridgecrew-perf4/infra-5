@@ -52,7 +52,7 @@ module "web_instance" {
 module "lb_ip" {
   source  = "./modules/scw-ip"
   name    = "lb"
-  aliases = ["bag", "cloud", "crypto", "cv", "git", "grocy", "mail", "ndata", "pfa", "rspamd", "rssbr", "wedding", "www"]
+  aliases = ["bag", "cloud", "crypto", "git", "grocy", "mail", "ndata", "pfa", "rspamd", "rssbr", "wedding", "www"]
 }
 
 module "mail_ip" {
@@ -87,7 +87,7 @@ resource "ovh_domain_zone_record" "blog" {
   subdomain = "blog"
   fieldtype = "CNAME"
   ttl       = "3600"
-  target    = "friendly-benz-fcc337.netlify.app."
+  target    = "blog-nicolas-karolak.netlify.app."
 }
 
 resource "ovh_domain_zone_record" "caa_iodef" {
@@ -102,6 +102,14 @@ resource "ovh_domain_zone_record" "caa_issue" {
   fieldtype = "CAA"
   ttl       = "3600"
   target    = "0 issue \"letsencrypt.org\""
+}
+
+resource "ovh_domain_zone_record" "cv" {
+  zone      = "karolak.fr"
+  subdomain = "cv"
+  fieldtype = "CNAME"
+  ttl       = "3600"
+  target    = "cv-nicolas-karolak.netlify.app."
 }
 
 resource "ovh_domain_zone_record" "dkim" {
