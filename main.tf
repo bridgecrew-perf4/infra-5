@@ -52,7 +52,7 @@ module "web_instance" {
 module "lb_ip" {
   source  = "./modules/scw-ip"
   name    = "lb"
-  aliases = ["bag", "cloud", "crypto", "git", "grocy", "mail", "ndata", "pfa", "rspamd", "rssbr", "wedding", "www"]
+  aliases = ["bag", "cloud", "git", "grocy", "mail", "ndata", "pfa", "rspamd", "rssbr", "www"]
 }
 
 module "mail_ip" {
@@ -102,6 +102,14 @@ resource "ovh_domain_zone_record" "caa_issue" {
   fieldtype = "CAA"
   ttl       = "3600"
   target    = "0 issue \"letsencrypt.org\""
+}
+
+resource "ovh_domain_zone_record" "crypto" {
+  zone      = "karolak.fr"
+  subdomain = "crypto"
+  fieldtype = "CNAME"
+  ttl       = "3600"
+  target    = "crypto-assr.netlify.app."
 }
 
 resource "ovh_domain_zone_record" "cv" {
