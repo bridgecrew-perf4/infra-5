@@ -1,0 +1,8 @@
+---
+
+- name: restart mariadb
+  systemd:
+    name: mariadb.service
+    state: restarted
+
+...

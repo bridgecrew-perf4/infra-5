@@ -1,0 +1,16 @@
+---
+
+- name: restart apache
+  systemd:
+    name: apache2.service
+    state: restarted
+
+- name: restart workers
+  loop: "{{ bag_import_services }}"
+  systemd:
+    daemon_reload: true
+    enabled: true
+    name: wallabag-worker@{{ item }}.service
+    state: restarted
+
+...

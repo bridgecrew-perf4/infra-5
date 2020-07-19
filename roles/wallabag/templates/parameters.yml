@@ -1,0 +1,21 @@
+parameters:
+    database_driver: pdo_pgsql
+    database_host: {{ bag_db_host }}
+    database_port: {{ bag_db_port }}
+    database_name: {{ bag_db_dbname }}
+    database_user: {{ bag_db_user }}
+    database_password: {{ bag_db_user_password }}
+    database_table_prefix: {{ bag_db_prefix }}
+    database_charset: {{ bag_db_charset }}
+    domain_name: 'https://{{ bag_domain_name }}'
+    mailer_transport: smtp
+    mailer_host: {{ bag_smtp_host }}
+    mailer_user: {{ bag_smtp_user }}
+    mailer_password: {{ bag_smtp_password }}
+    locale: {{ bag_locale }}
+    secret: {{ bag_secret }}
+    from_email: {{ bag_smtp_from }}
+    redis_scheme: tcp
+    redis_host: {{ bag_redis_host }}
+    redis_port: {{ bag_redis_port }}
+    redis_password: {{ bag_redis_password }}

@@ -1,0 +1,7 @@
+### backupninja pgsql config file ###
+
+databases = {{ item.databases | d(['all']) | join(' ') }}
+backupdir = {{ item.backupdir | d('/var/backups/postgres') }}
+compress = {{ 'yes' if item.compress | d(true) else 'no' }}
+vsname = {{ item.vsname | d(none) }}
+format = {{ item.format | d('plain') }}

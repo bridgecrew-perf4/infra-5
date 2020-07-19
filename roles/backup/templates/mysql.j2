@@ -1,0 +1,21 @@
+### backupninja mysql config file ###
+
+databases = {{ item.databases | d(['all']) | join(' ') }}
+backupdir = {{ item.backupdir | d('/var/backups/mysql') }}
+hotcopy = {{ 'yes' if item.hotcopy | d(false) else 'no' }}
+sqldump = {{ 'yes' if item.sqldump | d(true) else 'no' }}
+compress = {{ 'yes' if item.compress | d(true) else 'no' }}
+nodata = {{ item.nodata | d([]) | join(' ') }}
+sqldumpoptions = {{ item.sqldumpoptions | d(['--lock-tables', '--complete-insert', '--add-drop-table', '--quick', '--quote-names']) | join(' ') }}
+vsname = {{ item.vsname | d(none) }}
+
+### authentication ###
+
+{% if item.user | d(none) %}
+user = {{ item.user }}
+{% elif item.dbusername | d(none) and item.dbpassword | d(none) %}
+dbusername = {{ item.dbusername }}
+dbpassword = {{ item.dbpassword }}
+{% else %}
+configfile = {{ item.configfile | d('/etc/mysql/debian.cnf') }}
+{% endif %}

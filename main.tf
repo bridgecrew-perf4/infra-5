@@ -52,7 +52,7 @@ module "web_instance" {
 module "lb_ip" {
   source  = "./modules/scw-ip"
   name    = "lb"
-  aliases = ["bag", "blog", "cloud", "crypto", "cv", "git", "grocy", "mail", "ndata", "pfa", "rspamd", "rssbr", "wedding", "www"]
+  aliases = ["bag", "cloud", "crypto", "cv", "git", "grocy", "mail", "ndata", "pfa", "rspamd", "rssbr", "wedding", "www"]
 }
 
 module "mail_ip" {
@@ -80,6 +80,14 @@ resource "ovh_domain_zone_record" "apex" {
   fieldtype = "A"
   ttl       = "3600"
   target    = module.lb_instance.ipv4
+}
+
+resource "ovh_domain_zone_record" "blog" {
+  zone      = "karolak.fr"
+  subdomain = "blog"
+  fieldtype = "CNAME"
+  ttl       = "3600"
+  target    = "friendly-benz-fcc337.netlify.app."
 }
 
 resource "ovh_domain_zone_record" "caa_iodef" {
@@ -153,7 +161,7 @@ resource "ovh_domain_zone_record" "spf" {
   zone      = "karolak.fr"
   fieldtype = "TXT"
   ttl       = "600"
-  target    = "v=spf1 mx include:spf.infomaniak.ch -all"
+  target    = "v=spf1 mx a ~all"
 }
 
 resource "ovh_domain_zone_record" "srv_imaps" {
@@ -161,7 +169,7 @@ resource "ovh_domain_zone_record" "srv_imaps" {
   subdomain = "_imaps._tcp"
   fieldtype = "SRV"
   ttl       = 3600
-  target    = "0 0 993 imap.karolak.fr."
+  target    = "0 0 993 smtp.karolak.fr."
 }
 
 resource "ovh_domain_zone_record" "srv_submission" {

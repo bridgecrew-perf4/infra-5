@@ -1,0 +1,9 @@
+---
+
+r2e_version: 3.11
+r2e_username: rss2email
+r2e_userid: 52000
+r2e_groupname: rss2email
+r2e_groupid: 52000
+r2e_virtualenv: /ust/local/venv/rss2email
+r2e_when: hourly

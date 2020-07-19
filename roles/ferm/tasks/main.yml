@@ -1,0 +1,43 @@
+---
+
+- name: packages
+  apt:
+    force_apt_get: true
+    install_recommends: false
+    name: "{{ ferm_packages }}"
+
+- name: configuration
+  notify: restart ferm
+  template:
+    src: ferm.conf.j2
+    dest: /etc/ferm/ferm.conf
+    backup: true
+
+- name: global
+  when: ferm_global_settings | d(false)
+  notify: restart ferm
+  copy:
+    dest: /etc/ferm/ferm.d/{{ ferm_rules_filename }}.conf
+    content: "{{ ferm_global_settings }}"
+
+- name: directories
+  loop:
+    - input
+    - output
+    - forward
+  file:
+    path: /etc/ferm/{{ item }}.d
+    state: directory
+
+- name: rules
+  loop:
+    - input
+    - output
+    - forward
+  when: lookup('vars', 'ferm_' + item + '_rules') | length > 0
+  notify: restart ferm
+  template:
+    dest: /etc/ferm/{{ item }}.d/{{ ferm_rules_filename }}.conf
+    src: rules.conf.j2
+
+...

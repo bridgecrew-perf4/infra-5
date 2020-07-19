@@ -1,0 +1,78 @@
+---
+
+pfa_packages:
+  - apache2
+  - fetchmail
+  - git
+  - libapache2-mod-php
+  - libdbd-pg-perl
+  - liblockfile-simple-perl
+  - php-imap
+  - php-mbstring
+  - php-pgsql
+  - postfix-pgsql
+  - postgresql-client
+  - python3-psycopg2
+
+pfa_web_user: www-data
+
+pfa_repo: https://github.com/postfixadmin/postfixadmin.git
+pfa_version: postfixadmin-3.2.4
+pfa_path: /usr/share/postfixadmin
+
+pfa_db_login_host: localhost
+pfa_db_login_port: 5432
+pfa_db_login_user: postgres
+pfa_db_login_password: "{{ pg_password | d() }}"
+pfa_db_name: postfix
+pfa_db_user: postfix
+pfa_db_password:
+
+pfa_setup_password:
+
+pfa_encrypt: md5crypt
+
+pfa_apache_mods:
+  - remoteip
+
+pfa_domain: example.net
+pfa_server_name: pfa.{{ pfa_domain }}
+
+pfa_admin: admin@{{ pfa_domain }}
+pfa_password:
+
+pfa_admin_email:
+pfa_admin_name: Postmaster
+
+pfa_smtp_server: localhost
+pfa_smtp_port: 25
+pfa_smtp_client:
+
+pfa_trusted_proxies: []
+
+pfa_apache_vhost: |
+  <VirtualHost *:80>
+    ServerName {{ pfa_server_name }}
+    DocumentRoot {{ pfa_path }}/public
+    <Directory {{ pfa_path }}/public>
+      php_admin_flag engine on
+      php_admin_flag expose_php off
+      php_admin_value upload_tmp_dir /var/spool/postfixadmin/
+      php_admin_value session.cookie_lifetime 0
+    </Directory>
+  </VirtualHost>
+
+pfa_apache_remoteip: |
+  RemoteIPHeader X-Real-IP
+  {% for proxy in pfa_trusted_proxies %}
+  RemoteIPTrustedProxy {{ proxy }}
+  {% endfor %}
+
+pfa_fetchmail: |
+  $db_type = "Pg";
+  $db_host = "{{ pfa_db_login_host }}:{{ pfa_db_login_port }}";
+  $db_name = "{{ pfa_db_name }}";
+  $db_username = "{{ pfa_db_user }}";
+  $db_password = "{{ pfa_db_password }}";
+
+...

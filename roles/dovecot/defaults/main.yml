@@ -1,0 +1,25 @@
+---
+
+imap_packages:
+  - dovecot-imapd
+  - dovecot-lmtpd
+  - dovecot-managesieved
+  - dovecot-pgsql
+
+imap_protocols:
+  - imap
+  - lmtp
+  - sieve
+
+imap_db_host: localhost
+imap_db_port: 5432
+imap_db_user: postfix
+imap_db_password:
+imap_db_name: postfix
+
+imap_postmaster: postmaster@example.net
+
+imap_tls_cert: /etc/ssl/certs/ssl-cert-snakeoil.pem
+imap_tls_key: /etc/ssl/certs/ssl-cert-snakeoil.key
+
+...

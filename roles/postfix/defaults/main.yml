@@ -1,0 +1,38 @@
+---
+
+smtp_admin: 'admin+{{ ansible_hostname }}@{{ smtp_host_domain }}'
+smtp_aliases:
+  root: '{{ smtp_admin }}'
+  vmail: '{{ smtp_admin }}'
+
+smtp_packages:
+  - pflogsumm
+  - postfix
+  - postfix-pgsql
+
+smtp_host_name: localhost
+smtp_host_domain: localdomain
+smtp_myhostname: '{{ smtp_host_name }}.{{ smtp_host_domain }}'
+smtp_mydestination:
+  - '{{ smtp_myhostname }}'
+  - '{{ smtp_host_name }}.{{ smtp_host_domain }}'
+  - 'localhost.{{ smtp_host_domain }}'
+  - 'localhost'
+
+smtp_interfaces: all
+smtp_protocols: all
+smtp_networks: []
+
+smtp_imap_host: localhost
+
+smtp_rspamd_host: localhost
+
+smtp_tls_cert: /etc/ssl/certs/ssl-cert-snakeoil.pem
+smtp_tls_key: /etc/ssl/private/ssl-cert-snakeoil.key
+
+smtp_db_host: localhost
+smtp_db_user: postfix
+smtp_db_password:
+smtp_db_name: postfix
+
+...

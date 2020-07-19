@@ -1,0 +1,45 @@
+---
+
+- name: set hostname
+  notify: restart relay server
+  hostname:
+    name: "{{ relay_hostname }}"
+
+- name: set domain
+  notify: restart relay server
+  copy:
+    dest: /etc/hosts
+    content: |
+      127.0.0.1 localhost
+      127.0.1.1 {{ relay_hostname }}.{{ relay_domain }} {{ relay_hostname }}
+      ::1       localhost ip6-localhost ip6-loopback
+      ff02::1   ip6-allnodes
+      ff02::2   ip6-allrouters
+
+- name: install packages
+  apt:
+    force_apt_get: true
+    install_recommends: false
+    name: "{{ relay_packages }}"
+
+- name: configure aliases
+  when: relay_admin | d(none)
+  notify: rebuild aliases
+  lineinfile:
+    path: /etc/aliases
+    regexp: '^root: .*$'
+    line: 'root: {{ relay_admin }}'
+
+- name: configure sasl password
+  notify: rebuild sasl_passwd
+  copy:
+    dest: /etc/postfix/sasl_passwd
+    content: "{{ relay_host }} {{ relay_user }}:{{ relay_password }}"
+
+- name: configure relay server
+  notify: restart relay server
+  template:
+    src: main.cf.j2
+    dest: /etc/postfix/main.cf
+
+...

@@ -1,0 +1,17 @@
+---
+
+- name: install redis packages
+  apt:
+    force_apt_get: true
+    install_recommends: false
+    name: "{{ redis_packages }}"
+
+- name: configure addresses binding
+  loop: "{{ redis_config }}"
+  notify: restart redis
+  replace:
+    path: /etc/redis/redis.conf
+    regexp: '^#?\s?{{ item.key }}\s+.*$'
+    replace: "{{ item.key }} {{ item.value }}"
+
+...

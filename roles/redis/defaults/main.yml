@@ -1,0 +1,12 @@
+---
+
+redis_packages:
+  - redis-server
+
+redis_config:
+  - key: bind
+    value: 127.0.0.1 ::1
+  - key: port
+    value: 6379
+
+...

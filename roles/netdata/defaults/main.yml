@@ -1,0 +1,21 @@
+---
+
+ndata_packages:
+  - netdata
+
+ndata_bind: localhost
+ndata_port: 19999
+
+ndata_config:
+  - section: global
+    option: update every
+    value: 5
+  - section: global
+    option: history
+    value: 720
+
+ndata_remove:
+  - section: global
+    option: bind socket to IP
+
+...

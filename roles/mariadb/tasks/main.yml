@@ -1,0 +1,94 @@
+---
+
+- name: install packages
+  apt:
+    force_apt_get: true
+    install_recommends: false
+    name: "{{ mariadb_packages }}"
+
+- name: remove anonymous user
+  mysql_user:
+    login_unix_socket: /run/mysqld/mysqld.sock
+    name: ""
+    host_all: true
+    state: absent
+
+- name: remove test db
+  mysql_db:
+    login_unix_socket: /run/mysqld/mysqld.sock
+    name: test
+    state: absent
+
+- name: set root password
+  when: mariadb_root_password | d(false)
+  mysql_user:
+    login_unix_socket: /run/mysqld/mysqld.sock
+    user: root
+    password: "{{ mariadb_root_password }}"
+    priv: "*.*:ALL,GRANT"
+    host_all: true
+
+- name: configure local passwordless authentication
+  when: mariadb_root_password | d(false)
+  copy:
+    dest: ~/.my.cnf
+    content: |
+      [client]
+      user = root
+      password = {{ mariadb_root_password }}
+
+- name: allow remote root
+  when: mariadb_root_password | d(false)
+  mysql_user:
+    login_unix_socket: /run/mysqld/mysqld.sock
+    user: root
+    password: "{{ mariadb_root_password }}"
+    priv: "*.*:ALL,GRANT"
+    host: "%"
+
+- name: configure server settings
+  when: mariadb_config_server | d(false)
+  notify: restart mariadb
+  copy:
+    dest: /etc/mysql/mariadb.conf.d/90-server.cnf
+    content: |
+      [server]
+      {{ mariadb_config_server }}
+
+- name: configure mysqld settings
+  when: mariadb_config_mysqld | d(false)
+  notify: restart mariadb
+  copy:
+    dest: /etc/mysql/mariadb.conf.d/90-mysqld.cnf
+    content: |
+      [mysqld]
+      {{ mariadb_config_mysqld }}
+
+- name: configure client settings
+  when: mariadb_config_client | d(false)
+  notify: restart mariadb
+  copy:
+    dest: /etc/mysql/mariadb.conf.d/90-client.cnf
+    content: |
+      [client]
+      {{ mariadb_config_client }}
+
+- name: create databases
+  no_log: true
+  loop: "{{ mariadb_databases | dict2items(key_name='name', value_name='password') }}"
+  mysql_db:
+    login_unix_socket: /run/mysqld/mysqld.sock
+    name: "{{ item.name }}"
+    state: present
+
+- name: create users
+  no_log: true
+  loop: "{{ mariadb_databases | dict2items(key_name='name', value_name='password') }}"
+  mysql_user:
+    login_unix_socket: /run/mysqld/mysqld.sock
+    name: "{{ item.name }}"
+    password: "{{ item.password }}"
+    priv: "{{ item.name }}.*:ALL"
+    host_all: true
+
+...

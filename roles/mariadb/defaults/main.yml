@@ -1,0 +1,16 @@
+---
+
+mariadb_packages:
+  - python3-pymysql
+  - mariadb-server
+
+mariadb_root_password:
+
+mariadb_databases: {}
+
+mariadb_config_server:
+mariadb_config_mysqld: |
+  bind-address = localhost
+mariadb_config_client:
+
+...

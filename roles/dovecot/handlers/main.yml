@@ -1,0 +1,26 @@
+---
+
+- name: compile check spam script
+  become: true
+  become_user: vmail
+  command:
+    cmd: sievec /var/mail/vhosts/sieve/global/check-spam.sieve
+
+- name: compile learn spam script
+  become: true
+  become_user: vmail
+  command:
+    cmd: sievec /var/mail/vhosts/sieve/global/report-spam.sieve
+
+- name: compile learn ham script
+  become: true
+  become_user: vmail
+  command:
+    cmd: sievec /var/mail/vhosts/sieve/global/report-ham.sieve
+
+- name: restart imap server
+  systemd:
+    name: dovecot
+    state: restarted
+
+...

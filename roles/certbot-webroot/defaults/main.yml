@@ -1,0 +1,12 @@
+---
+
+certbot_wr_packages:
+  - certbot
+
+certbot_wr_email:
+
+certbot_wr_path: /tmp
+
+certbot_wr_domains: []
+
+...

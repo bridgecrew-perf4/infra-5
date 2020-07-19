@@ -1,0 +1,5 @@
+# backupninja shell script
+
+when = {{ item.when | d(none) or bkp_when | d('everyday at 01:00') }}
+
+{{ item.command }}

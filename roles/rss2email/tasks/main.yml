@@ -1,0 +1,45 @@
+---
+
+- name: Create {{ r2e_groupname }} group
+  group:
+    gid: "{{ r2e_groupid }}"
+    name: "{{ r2e_groupname }}"
+    system: true
+
+- name: Create {{ r2e_username }} user
+  group:
+    group: "{{ r2e_groupname }}"
+    home: /var/run/{{ r2e_username }}
+    name: "{{ r2e_username }}"
+    shell: /usr/sbin/nologin
+    system: true
+    uid: "{{ r2e_userid }}"
+
+- name: Install python3 requirements
+  apt:
+    force_apt_get: true
+    install_recommends: false
+    name: virtualenv
+
+- name: Install rss2email
+  pip:
+    name: "{{ r2e_package }}=={{ r2e_version }}"
+    virtualenv: "{{ r2e_virtualenv }}"
+    virtualenv_python: python3
+
+- name: Create rss2email service
+  template:
+    src: rss2email.service.j2
+    dest: /etc/systemd/system/rss2email.service
+
+- name: Create rss2email timer
+  template:
+    src: rss2email.timer.j2
+    dest: /etc/systemd/system/rss2email.timer
+
+- name: Enable rss2email timer
+  systemd:
+    name: rss2email.timer
+    daemon_reload: true
+    enabled: true
+    state: started

@@ -1,0 +1,14 @@
+---
+
+galaxy_info:
+  author: Nicolas Karolak
+  description: Install and configure Netdata agent
+  galaxy_tags: []
+  license: WTFPL
+  min_ansible_version: 2.9
+  platforms:
+    - name: 'Debian'
+      versions:
+        - 'buster'
+
+dependencies: []

@@ -1,0 +1,16 @@
+---
+
+certbot_packages:
+  - certbot
+  - python3-certbot-dns-ovh
+
+certbot_ovh_endpoint: ovh-eu
+certbot_ovh_application_key:
+certbot_ovh_application_secret:
+certbot_ovh_consumer_key:
+
+certbot_email:
+
+certbot_domains: []
+
+...

@@ -1,0 +1,40 @@
+---
+
+rspamd_packages:
+  - rspamd
+
+rspamd_password:
+
+rspamd_worker_normal: |
+  bind_socket = "localhost:11333";
+
+rspamd_worker_proxy: |
+  bind_socket = "localhost:11332";
+  milter = yes;
+  timeout = 120s;
+  upstream "local" {
+    default = yes;
+    self_scan = yes;
+  }
+
+rspamd_dkim_signing: |
+  selector = "mail";
+  path = "/var/lib/rspamd/dkim/$selector.key";
+  allow_username_mismatch = true;
+
+rspamd_arc: |
+  selector = "mail";
+  path = "/var/lib/rspamd/dkim/$selector.key";
+  allow_username_mismatch = true;
+
+rspamd_worker_controller: |
+  password = "{{ rspamd_password | password_hash('bcrypt') }}"
+
+rspamd_classifier_bayes: |
+  servers = "127.0.0.1";
+  backend = "redis";
+
+rspamd_milter_headers: |
+  use = ["x-spamd-bar", "x-spam-level", "authentication-results"];
+
+...

@@ -1,0 +1,51 @@
+---
+
+- name: install packages
+  apt:
+    force_apt_get: true
+    install_recommends: false
+    name: "{{ ndata_packages }}"
+
+- name: configure binding and port
+  notify: restart netdata
+  loop:
+    - section: web
+      option: bind to
+      value: "{{ ndata_bind }}"
+    - section: web
+      option: default port
+      value: "{{ ndata_port }}"
+  ini_file:
+    path: /etc/netdata/netdata.conf
+    section: "{{ item.section }}"
+    option: "\t{{ item.option }}"
+    value: "{{ item.value }}"
+
+- name: configure settings
+  notify: restart netdata
+  loop: "{{ ndata_config }}"
+  ini_file:
+    path: /etc/netdata/netdata.conf
+    section: "{{ item.section }}"
+    option: "\t{{ item.option }}"
+    value: "{{ item.value }}"
+
+- name: remove settings
+  notify: restart netdata
+  loop: "{{ ndata_remove }}"
+  ini_file:
+    path: /etc/netdata/netdata.conf
+    section: "{{ item.section }}"
+    option: "\t{{ item.option }}"
+    state: absent
+
+- meta: flush_handlers
+
+- name: update config
+  notify: restart netdata
+  get_url:
+    use_proxy: false
+    url: http://localhost:19999/netdata.conf
+    dest: /etc/netdata/netdata.conf
+
+...

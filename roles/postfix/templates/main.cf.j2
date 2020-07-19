@@ -1,0 +1,104 @@
+# man 5 postconf
+
+inet_interfaces = {{ smtp_interfaces }}
+inet_protocols = {{ smtp_protocols }}
+
+myhostname = {{ smtp_myhostname }}
+mydestination = {{ smtp_mydestination | unique | join(' ') }}
+{% if smtp_networks | length > 0 %}
+mynetworks = {{ smtp_networks | join(' ') }}
+{% endif %}
+
+biff = no
+compatibility_level = 2
+
+postscreen_greet_action = enforce
+disable_vrfy_command = yes
+strict_rfc821_envelopes = yes
+show_user_unknown_table_name = no
+allow_percent_hack = no
+swap_bangpath = no
+recipient_delimiter = +
+
+milter_protocol = 6
+milter_mail_macros = i {mail_addr} {client_addr} {client_name} {auth_authen}
+milter_default_action = accept
+smtpd_milters = inet:{{ smtp_rspamd_host }}:11332
+non_smtpd_milters = inet:{{ smtp_rspamd_host }}:11332
+
+alias_maps = hash:/etc/aliases
+
+virtual_transport = lmtp:inet:{{ smtp_imap_host }}:24
+virtual_mailbox_domains =
+	proxy:pgsql:/etc/postfix/sql/domain.cf
+virtual_alias_maps =
+	proxy:pgsql:/etc/postfix/sql/alias.cf
+	proxy:pgsql:/etc/postfix/sql/alias_domain.cf
+	proxy:pgsql:/etc/postfix/sql/alias_domain_catchall.cf
+virtual_mailbox_maps =
+	proxy:pgsql:/etc/postfix/sql/mailbox.cf
+	proxy:pgsql:/etc/postfix/sql/alias_domain_mailbox.cf
+
+smtpd_sasl_auth_enable = yes
+smtpd_sasl_path = inet:{{ smtp_imap_host }}:1993
+smtpd_sasl_type = dovecot
+
+smtpd_helo_required = yes
+
+smtpd_tls_security_level = may
+smtpd_tls_auth_only = yes
+
+smtpd_tls_cert_file = {{ smtp_tls_cert }}
+smtpd_tls_key_file = {{ smtp_tls_key }}
+
+smtp_dns_support_level = dnssec
+smtp_tls_security_level = dane
+
+smtpd_tls_mandatory_protocols = !SSLv2 !SSLv3 !TLSv1 !TLSv1.1 TLSv1.2
+smtpd_tls_mandatory_ciphers = high
+
+tls_ssl_options = no_ticket no_compression
+
+smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
+
+smtpd_client_restrictions =
+	permit_mynetworks
+	permit_sasl_authenticated
+	reject_unknown_reverse_client_hostname
+	#reject_unknown_client_hostname
+	reject_unauth_pipelining
+
+smtpd_helo_restrictions =
+	permit_mynetworks
+	permit_sasl_authenticated
+	reject_invalid_helo_hostname
+	reject_non_fqdn_helo_hostname
+	reject_unknown_helo_hostname
+	reject_unauth_pipelining
+
+smtpd_sender_restrictions =
+	permit_mynetworks
+	permit_sasl_authenticated
+	reject_non_fqdn_sender
+	reject_unknown_sender_domain
+	reject_unauth_pipelining
+
+smtpd_relay_restrictions =
+	permit_mynetworks
+	permit_sasl_authenticated
+	reject_unauth_destination
+
+smtpd_recipient_restrictions =
+        permit_mynetworks
+        permit_sasl_authenticated
+        reject_non_fqdn_recipient
+        reject_unknown_recipient_domain
+	reject_unauth_pipelining
+	reject_unverified_recipient
+
+smtpd_data_restrictions =
+	permit_mynetworks
+	permit_sasl_authenticated
+	reject_multi_recipient_bounce
+	reject_unauth_pipelining

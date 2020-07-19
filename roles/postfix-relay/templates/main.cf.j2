@@ -1,0 +1,26 @@
+# man 5 postconf
+
+inet_interfaces = loopback-only
+
+myhostname = {{ relay_hostname }}.{{ relay_domain }}
+mynetworks = {{ relay_networks | join(' ') }}
+mydestinations = {{ relay_destinations | unique | join(' ') }}
+
+biff = no
+compatibility_level = 2
+
+alias_maps = hash:/etc/aliases
+alias_database = hash:/etc/aliases
+
+relayhost = {{ relay_host }}
+
+smtpd_sasl_auth_enable = yes
+smtp_sasl_security_options = noanonymous
+smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+smtp_use_tls = yes
+smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
+
+smtpd_relay_restrictions =
+	permit_mynetworks
+	permit_sasl_authenticated
+	defer_unauth_destination

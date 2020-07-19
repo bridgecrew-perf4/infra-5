@@ -1,0 +1,85 @@
+---
+
+- name: 'install packages'
+  notify: 'restart apache'
+  apt:
+    force_apt_get: true
+    install_recommends: false
+    name: '{{ rssbr_packages }}'
+
+# APPLICATION
+
+- name: 'clone application repository'
+  git:
+    repo: '{{ rssbr_url }}'
+    version: '{{ rssbr_version }}'
+    dest: '{{ rssbr_app_path }}'
+
+- name: 'fix data permissions'
+  file:
+    path: '{{ rssbr_app_path }}/cache'
+    owner: 'www-data'
+    recurse: true
+    state: 'directory'
+
+- name: 'create configuration file'
+  lineinfile:
+    create: true
+    insertbefore: 'BOF'
+    line: '; <?php exit; ?>'
+    path: '{{ rssbr_app_path }}/config.ini.php'
+
+- name: 'configure settings'
+  loop: '{{ rssbr_settings }}'
+  ini_file:
+    option: '{{ item.option }}'
+    path: '{{ rssbr_app_path }}/config.ini.php'
+    section: '{{ item.section }}'
+    value: '{{ item.value }}'
+
+- name: 'configure bridges list'
+  copy:
+    content: "{{ rssbr_bridges | join('\n') }}"
+    dest: '{{ rssbr_app_path }}/whitelist.txt'
+
+# SYSTEM CONFIGURATION
+
+- name: 'remove default vhost'
+  notify: 'restart apache'
+  file:
+    path: '/etc/apache2/sites-enabled/000-default.conf'
+    state: 'absent'
+
+- name: 'enable required apache modules'
+  notify: 'restart apache'
+  loop: '{{ rssbr_apache_mods }}'
+  apache2_module:
+    name: '{{ item }}'
+
+- meta: 'flush_handlers'
+
+- name: 'configure vhost'
+  notify: 'restart apache'
+  copy:
+    dest: '/etc/apache2/sites-available/{{ rssbr_app_name }}.conf'
+    content: '{{ rssbr_apache_vhost }}'
+
+- name: 'enable vhost'
+  notify: 'restart apache'
+  command:
+    cmd: 'a2ensite {{ rssbr_app_name }}.conf'
+    creates: '/etc/apache2/sites-enabled/{{ rssbr_app_name }}.conf'
+
+- name: 'configure remoteip'
+  when: 'rssbr_trusted_proxies | length > 0'
+  notify: 'restart apache'
+  copy:
+    dest: '/etc/apache2/conf-available/remoteip.conf'
+    content: '{{ rssbr_apache_remoteip }}'
+
+- name: 'enable remoteip'
+  when: 'rssbr_trusted_proxies | length > 0'
+  notify: 'restart apache'
+  command:
+    cmd: 'a2enconf remoteip.conf'
+    creates: '/etc/apache2/conf-enabled/remoteip.conf'

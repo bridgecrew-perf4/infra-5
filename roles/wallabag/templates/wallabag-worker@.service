@@ -1,0 +1,13 @@
+[Unit]
+Description=Wallabag import worker for %i
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory={{ bag_path }}
+ExecStart=/usr/bin/php bin/console wallabag:import:redis-worker --env=prod %i -vv
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

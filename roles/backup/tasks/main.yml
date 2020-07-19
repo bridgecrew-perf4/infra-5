@@ -1,0 +1,76 @@
+---
+
+- name: install backupninja
+  apt:
+    force_apt_get: true
+    install_recommends: false
+    name: "{{ bkp_packages }}"
+
+- name: check restic version
+  register: bkp_check_restic_version
+  changed_when: bkp_check_restic_version.stdout == "KO"
+  shell:
+    executable: /bin/bash
+    cmd: |
+      if command -v restic &>/dev/null; then
+        v=$(restic version | awk '{print $2}')
+        if dpkg --compare-versions "$v" "lt" "{{ bkp_restic_version }}"; then
+          echo KO
+        fi
+      else
+        echo KO
+      fi
+
+- name: download restic
+  when:
+    - bkp_check_restic_version is changed
+  register: bkp_dl_restic
+  get_url:
+    url: https://github.com/restic/restic/releases/download/v{{ bkp_restic_version }}/restic_{{ bkp_restic_version }}_linux_amd64.bz2
+    dest: ~/restic_{{ bkp_restic_version }}_linux_amd64.bz2
+
+- name: install restic
+  when: bkp_dl_restic is changed
+  shell:
+    cmd: |
+      bunzip2 restic*
+      mv -f restic* /usr/bin/restic
+      chmod +x /usr/bin/restic
+
+- name: configure backupninja
+  template:
+    src: backupninja.conf.j2
+    dest: /etc/backupninja.conf
+
+- name: configure backup jobs
+  loop: "{{ bkp_jobs }}"
+  template:
+    src: "{{ item.type | mandatory }}.j2"
+    dest: /etc/backup.d/{{ item.priority | d(10, true) }}-{{ item.name | mandatory }}.{{ item.type | mandatory }}
+    mode: 0640
+
+- name: set environment variables
+  when:
+    - bkp_restic_repository | d(none)
+    - bkp_restic_password | d(none)
+    - bkp_restic_s3_access_key | d(none)
+    - bkp_restic_s3_secret_key | d(none)
+    - bkp_restic_s3_region | d(none)
+  no_log: true
+  loop:
+    - key: RESTIC_REPOSITORY
+      value: "{{ bkp_restic_repository }}"
+    - key: RESTIC_PASSWORD
+      value: "{{ bkp_restic_password }}"
+    - key: AWS_ACCESS_KEY_ID
+      value: "{{ bkp_restic_s3_access_key }}"
+    - key: AWS_SECRET_ACCESS_KEY
+      value: "{{ bkp_restic_s3_secret_key }}"
+    - key: AWS_DEFAULT_REGION
+      value: "{{ bkp_restic_s3_region }}"
+  lineinfile:
+    path: /etc/environment
+    regexp: '^{{ item.key }}=.*$'
+    line: '{{ item.key }}={{ item.value }}'
+
+...

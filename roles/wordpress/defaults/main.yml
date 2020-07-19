@@ -1,0 +1,66 @@
+---
+
+wp_packages:
+  - apache2
+  - libapache2-mod-php
+  - php-curl
+  - php-gd
+  - php-imagick
+  - php-intl
+  - php-mbstring
+  - php-mysql
+  - php-redis
+  - php-soap
+  - php-xml
+  - php-xmlrpc
+  - php-zip
+  - python3-pymysql
+
+wp_version: 5.4.1
+wp_url: https://fr.wordpress.org/wordpress-{{ wp_version }}-fr_FR.tar.gz
+
+wp_path: /var/www/wordpress
+
+# DATABASE
+
+wp_db_host: localhost
+wp_db_port: 3306
+wp_db_name: wordpress
+wp_db_admin: root
+wp_db_admin_password:
+wp_db_user: wordpress
+wp_db_user_password:
+
+# CONFIG
+
+wp_domain: www.example.net
+
+# APACHE
+
+wp_trusted_proxies: []
+
+wp_apache_vhost: |
+  <VirtualHost *:80>
+    ServerName {{ wp_domain }}
+
+    DocumentRoot {{ wp_path }}
+
+    <Directory {{ wp_path }}>
+      Require all granted
+      AllowOverride All
+    </Directory>
+  </VirtualHost>
+
+wp_apache_remoteip: |
+  RemoteIPHeader X-Real-IP
+  {% for proxy in wp_trusted_proxies %}
+  RemoteIPTrustedProxy {{ proxy }}
+  {% endfor %}
+
+wp_apache_mods:
+  - expires
+  - headers
+  - remoteip
+  - rewrite
+
+...

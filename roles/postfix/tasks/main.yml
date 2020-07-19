@@ -1,0 +1,124 @@
+---
+
+- name: set hostname
+  notify: restart smtp server
+  hostname:
+    name: "{{ smtp_host_name }}"
+
+- name: set domain
+  notify: restart smtp server
+  copy:
+    dest: /etc/hosts
+    content: |
+      127.0.0.1 localhost
+      127.0.1.1 {{ smtp_host_name }}.{{ smtp_host_domain }} {{ smtp_host_name }}
+      ::1       localhost ip6-localhost ip6-loopback
+      ff02::1   ip6-allnodes
+      ff02::2   ip6-allrouters
+
+- name: install packages
+  apt:
+    force_apt_get: true
+    install_recommends: false
+    name: "{{ smtp_packages }}"
+
+- name: configure aliases
+  when: smtp_admin | d(none)
+  notify: rebuild aliases
+  loop: '{{ smtp_aliases | dict2items }}'
+  lineinfile:
+    path: /etc/aliases
+    regexp: '^{{ item.key }}: .*$'
+    line: '{{ item.key }}: {{ item.value }}'
+
+- name: configure smtp server
+  notify: restart smtp server
+  template:
+    src: main.cf.j2
+    dest: /etc/postfix/main.cf
+
+- name: enable submission protocol
+  notify: restart smtp server
+  replace:
+    path: /etc/postfix/master.cf
+    regexp: '^#?(submission.*)$'
+    replace: '\1'
+
+- name: create sql configuration directory
+  file:
+    path: /etc/postfix/sql
+    state: directory
+
+- name: domain query
+  notify: restart smtp server
+  copy:
+    dest: /etc/postfix/sql/domain.cf
+    content: |
+      hosts = {{ smtp_db_host }}
+      user = {{ smtp_db_user }}
+      password = {{ smtp_db_password }}
+      dbname = {{ smtp_db_name }}
+      query = SELECT domain FROM domain WHERE domain='%s' AND active = '1'
+
+- name: alias query
+  notify: restart smtp server
+  copy:
+    dest: /etc/postfix/sql/alias.cf
+    content: |
+      hosts = {{ smtp_db_host }}
+      user = {{ smtp_db_user }}
+      password = {{ smtp_db_password }}
+      dbname = {{ smtp_db_name }}
+      query = SELECT goto FROM alias WHERE address='%s' AND active = '1'
+
+- name: alias domain query
+  notify: restart smtp server
+  copy:
+    dest: /etc/postfix/sql/alias_domain.cf
+    content: |
+      hosts = {{ smtp_db_host }}
+      user = {{ smtp_db_user }}
+      password = {{ smtp_db_password }}
+      dbname = {{ smtp_db_name }}
+      query = SELECT goto FROM alias,alias_domain WHERE alias_domain.alias_domain = '%d' and alias.address = CONCAT('%u', '@', alias_domain.target_domain) AND alias.active = '1' AND alias_domain.active = '1'
+
+- name: alias domain catchall query
+  notify: restart smtp server
+  copy:
+    dest: /etc/postfix/sql/alias_domain_catchall.cf
+    content: |
+      hosts = {{ smtp_db_host }}
+      user = {{ smtp_db_user }}
+      password = {{ smtp_db_password }}
+      dbname = {{ smtp_db_name }}
+      query  = SELECT goto FROM alias,alias_domain WHERE alias_domain.alias_domain = '%d' and alias.address = CONCAT('@', alias_domain.target_domain) AND alias.active = '1' AND alias_domain.active = '1'
+
+- name: alias domain mailbox query
+  notify: restart smtp server
+  copy:
+    dest: /etc/postfix/sql/alias_domain_mailbox.cf
+    content: |
+      hosts = {{ smtp_db_host }}
+      user = {{ smtp_db_user }}
+      password = {{ smtp_db_password }}
+      dbname = {{ smtp_db_name }}
+      query = SELECT maildir FROM mailbox,alias_domain WHERE alias_domain.alias_domain = '%d' and mailbox.username = CONCAT('%u', '@', alias_domain.target_domain) AND mailbox.active = '1' AND alias_domain.active = '1'
+
+- name: mailbox query
+  notify: restart smtp server
+  copy:
+    dest: /etc/postfix/sql/mailbox.cf
+    content: |
+      hosts = {{ smtp_db_host }}
+      user = {{ smtp_db_user }}
+      password = {{ smtp_db_password }}
+      dbname = {{ smtp_db_name }}
+      query = SELECT maildir FROM mailbox WHERE username='%s' AND active = '1'
+
+- name: setup pflogsumm cronjob
+  cron:
+    job: '/usr/sbin/pflogsumm -d yesterday --problems-first --rej-add-from -q /var/log/mail.log | /usr/bin/mail -s "Postfix log summary | {{ ansible_hostname }}" {{ smtp_admin }}'
+    name: 'send pflogsumm'
+    special_time: 'daily'
+
+...

@@ -1,0 +1,74 @@
+---
+
+- name: install rspamd packages
+  apt:
+    force_apt_get: true
+    install_recommends: false
+    name: "{{ rspamd_packages }}"
+
+# CONFIGURATION
+
+- name: configure worker-normal
+  notify: restart rspamd
+  copy:
+    dest: /etc/rspamd/local.d/worker-normal.inc
+    content: "{{ rspamd_worker_normal }}"
+
+- name: configure worker-proxy
+  notify: restart rspamd
+  copy:
+    dest: /etc/rspamd/local.d/worker-proxy.inc
+    content: "{{ rspamd_worker_proxy }}"
+
+- name: configure worker-controller
+  notify: restart rspamd
+  copy:
+    dest: /etc/rspamd/local.d/worker-controller.inc
+    content: "{{ rspamd_worker_controller }}"
+
+- name: configure classifier-bayes
+  notify: restart rspamd
+  copy:
+    dest: /etc/rspamd/local.d/classifier-bayes.conf
+    content: "{{ rspamd_classifier_bayes }}"
+
+- name: configure milter_headers
+  notify: restart rspamd
+  copy:
+    dest: /etc/rspamd/local.d/milter_headers.conf
+    content: "{{ rspamd_milter_headers }}"
+
+- name: create dkim directory
+  file:
+    path: /var/lib/rspamd/dkim
+    owner: _rspamd
+    group: _rspamd
+    state: directory
+
+- name: generate dkim private key
+  become: true
+  become_user: _rspamd
+  register: rspamd_dkim
+  command:
+    cmd: rspamadm dkim_keygen -s mail -k /var/lib/rspamd/dkim/mail.key
+    creates: /var/lib/rspamd/dkim/mail.key
+
+- name: save dkim public key
+  when: rspamd_dkim is changed
+  copy:
+    dest: /var/lib/rspamd/dkim/mail.pub
+    content: "{{ rspamd_dkim.stdout }}"
+
+- name: configure dkim_signing
+  notify: restart rspamd
+  copy:
+    dest: /etc/rspamd/local.d/dkim_signing.conf
+    content: "{{ rspamd_dkim_signing }}"
+
+- name: configure arc
+  notify: restart rspamd
+  copy:
+    dest: /etc/rspamd/local.d/arc.conf
+    content: "{{ rspamd_arc }}"
+
+...

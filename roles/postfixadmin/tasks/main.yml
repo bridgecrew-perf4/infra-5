@@ -1,0 +1,144 @@
+---
+
+- name: install required packages
+  apt:
+    force_apt_get: true
+    install_recommends: false
+    name: "{{ pfa_packages }}"
+
+# DATABASE
+
+- name: install postgresql
+  when: pfa_db_login_host == "localhost"
+  apt:
+    force_apt_get: true
+    install_recommends: false
+    name: postgresql
+
+- name: create database user
+  postgresql_user:
+    login_host: "{{ pfa_db_login_host }}"
+    login_port: "{{ pfa_db_login_port }}"
+    login_user: "{{ pfa_db_login_user }}"
+    login_password: "{{ pfa_db_login_password }}"
+    name: "{{ pfa_db_user }}"
+    password: "{{ pfa_db_password }}"
+
+- name: create database
+  register: pfa_db_created
+  postgresql_db:
+    login_host: "{{ pfa_db_login_host }}"
+    login_port: "{{ pfa_db_login_port }}"
+    login_user: "{{ pfa_db_login_user }}"
+    login_password: "{{ pfa_db_login_password }}"
+    name: "{{ pfa_db_name }}"
+    owner: "{{ pfa_db_user }}"
+
+# APPLICATION
+
+- name: clone application repository
+  git:
+    repo: "{{ pfa_repo }}"
+    version: "{{ pfa_version }}"
+    dest: "{{ pfa_path }}"
+
+- name: create template cache directory
+  file:
+    path: "{{ pfa_path }}/templates_c"
+    owner: "{{ pfa_web_user }}"
+    state: directory
+
+- name: configure postfixadmin
+  template:
+    src: config.php
+    dest: "{{ pfa_path }}/config.local.php"
+
+- name: populate database
+  register: pfa_upgrade
+  changed_when: "'is up to date' not in pfa_upgrade.stdout"
+  command:
+    cmd: php {{ pfa_path }}/public/upgrade.php
+
+- name: link postfixadmin-cli
+  file:
+    src: "{{ pfa_path }}/scripts/postfixadmin-cli"
+    dest: /usr/bin/postfixadmin-cli
+    state: link
+
+- name: create superadmin user
+  register: pfa_create_admin
+  changed_when: "'admin already exists' not in pfa_create_admin.stderr"
+  command:
+    cmd: >
+      postfixadmin-cli admin
+        add {{ pfa_admin }}
+        --password '{{ pfa_password }}'
+        --password2 '{{ pfa_password }}'
+        --superadmin 1
+        --active 1
+
+# FETCHMAIL
+
+- name: create fetchmail directories
+  loop:
+    - /etc/mail/postfixadmin
+    - /var/run/fetchmail
+  file:
+    path: "{{ item }}"
+    owner: vmail
+    group: vmail
+    state: directory
+
+- name: fetchmail configuration
+  copy:
+    dest: /etc/mail/postfixadmin/fetchmail.conf
+    content: "{{ pfa_fetchmail }}"
+
+- name: fetchmail cronjob
+  cron:
+    name: fetchmail
+    minute: "*/10"
+    user: vmail
+    job: "/usr/bin/perl {{ pfa_path }}/ADDITIONS/fetchmail.pl"
+
+# APACHE
+
+- name: enable apache modules
+  notify: restart apache
+  loop: "{{ pfa_apache_mods }}"
+  apache2_module:
+    name: "{{ item }}"
+
+- name: remove default vhost
+  notify: restart apache
+  file:
+    path: /etc/apache2/sites-enabled/000-default.conf
+    state: absent
+
+- name: configure vhost
+  notify: restart apache
+  copy:
+    dest: /etc/apache2/sites-available/postfixadmin.conf
+    content: "{{ pfa_apache_vhost }}"
+
+- name: enable vhost
+  notify: restart apache
+  command:
+    cmd: a2ensite postfixadmin.conf
+    creates: /etc/apache2/sites-enabled/postfixadmin.conf
+
+- name: configure remoteip
+  when: pfa_trusted_proxies | length > 0
+  notify: restart apache
+  copy:
+    dest: /etc/apache2/conf-available/remoteip.conf
+    content: "{{ pfa_apache_remoteip }}"
+
+- name: enable remoteip
+  when: pfa_trusted_proxies | length > 0
+  notify: restart apache
+  command:
+    cmd: a2enconf remoteip.conf
+    creates: /etc/apache2/conf-enabled/remoteip.conf
+
+...

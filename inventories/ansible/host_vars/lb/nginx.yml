@@ -79,7 +79,7 @@ nginx_http:
       server {
         listen 443 ssl http2;
         listen [::]:443 ssl http2;
-        server_name blog.karolak.fr karolak.fr www.karolak.fr;
+        server_name blog.karolak.fr;
 
         include /etc/nginx/conf.d/snippet/tls.conf;
         include /etc/nginx/conf.d/snippet/cert-karolak.conf;
@@ -105,6 +105,19 @@ nginx_http:
 
           proxy_pass http://{{ lookup('dig', 'web.priv.karolak.fr') }}/;
         }
+      }
+  - name: blog-redirect
+    content: |
+      server {
+        listen 443 ssl http2;
+        listen [::]:443 ssl http2;
+        server_name karolak.fr www.karolak.fr;
+
+        include /etc/nginx/conf.d/snippet/tls.conf;
+        include /etc/nginx/conf.d/snippet/cert-karolak.conf;
+        include /etc/nginx/conf.d/snippet/acme-challenge.conf;
+
+        return 301 https://blog.karolak.fr$request_uri;
       }
   - name: crypto
     content: |

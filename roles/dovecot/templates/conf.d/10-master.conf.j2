@@ -1,0 +1,39 @@
+service imap-login {
+	inet_listener imap {
+		port = 0
+	}
+	inet_listener imaps {
+	}
+}
+service pop3-login {
+	inet_listener pop3 {
+		port = 0
+	}
+	inet_listener pop3s {
+		port = 0
+	}
+}
+service imap {
+}
+service lmtp {
+	inet_listener ltmp {
+		address = 0.0.0.0 ::0
+		port = 24
+	}
+}
+service auth {
+	inet_listener {
+		address = 0.0.0.0 ::0
+		port = 1993
+	}
+}
+service auth-worker {
+	user = {{ imap_user.name }}
+}
+service dict {
+	unix_listener dict {
+		mode = 0660
+		user = {{ imap_user.name }}
+		group = {{ imap_group.name }}
+	}
+}

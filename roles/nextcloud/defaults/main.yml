@@ -1,0 +1,131 @@
+---
+
+nc_ansible_packages:
+  - python3-psycopg2
+
+nc_packages:
+  - apache2
+  - ffmpeg
+  - libapache2-mod-php
+  - php-apcu
+  - php-bcmath
+  - php-bz2
+  - php-curl
+  - php-gd
+  - php-gmp
+  - php-imagick
+  - php-intl
+  - php-json
+  - php-ldap
+  - php-mbstring
+  - php-memcached
+  - php-pgsql
+  - php-redis
+  - php-xml
+  - php-zip
+
+nc_version: 19.0.1
+
+nc_group: www-data
+nc_user: www-data
+
+nc_home_path: /var/www
+nc_app_path: "{{ nc_home_path }}/nextcloud"
+nc_data_path: "{{ nc_home_path }}/nextcloud-data"
+
+nc_db_host: localhost
+nc_db_port: 5432
+nc_db_name: nextcloud
+nc_db_admin: postgres
+nc_db_admin_password:
+nc_db_user: nextcloud
+nc_db_user_password:
+
+nc_domains:
+  - cloud.example.net
+
+nc_trusted_proxies: []
+
+nc_apache_vhost: |
+  <VirtualHost *:80>
+    DocumentRoot {{ nc_app_path }}/
+    ServerName {{ nc_domains[0] }}
+    ServerAlias {{ nc_domains | join(' ') }}
+
+    <Directory {{ nc_app_path }}/>
+      Require all granted
+      AllowOverride All
+      Options FollowSymLinks MultiViews
+
+      <IfModule mod_dav.c>
+        Dav off
+      </IfModule>
+
+    </Directory>
+  </VirtualHost>
+
+nc_apache_remoteip: |
+  RemoteIPHeader X-Real-IP
+  {% for proxy in nc_trusted_proxies %}
+  RemoteIPTrustedProxy {{ proxy }}
+  {% endfor %}
+
+nc_apache_mods:
+  - dir
+  - env
+  - headers
+  - mime
+  - remoteip
+  - rewrite
+
+nc_admin: admin
+nc_admin_password:
+
+nc_config:
+  system:
+    trusted_domains: "{{ nc_domains }}"
+    trusted_proxies: "{{ nc_trusted_proxies }}"
+    datadirectory: "{{ nc_data_path }}"
+    overwrite.cli.url: https://{{ nc_domains[0] }}
+    htaccess.RewriteBase: /
+    dbtype: pgsql
+    dbhost: "{{ nc_db_host }}"
+    dbport: "{{ nc_db_port }}"
+    dbuser: "{{ nc_db_user }}"
+    dbpassword: "{{ nc_db_user_password }}"
+    dbtableprefix: oc_
+    loglevel: 2
+    mail_smtpmode: smtp
+    mail_smtphost: smtp.example.net
+    mail_smtpport: 587
+    mail_smtpsecure: tls
+    mail_smtpauthtype: LOGIN
+    mail_smtpauth: 1
+    mail_smtpname: noreply@example.net
+    mail_smtppassword: topsecret
+    mail_from_address: noreply
+    mail_domain: example.net
+    memcache.local: \OC\Memcache\APCu
+    objectstore:
+      class: \OC\Files\ObjectStore\S3
+      arguments:
+        bucket: example-nextcloud-data
+        autocreate: true
+        key: my_access_key
+        secret: my_secret_key
+        hostname: s3.endpoint.host
+        port: 443
+        use_ssl: true
+        region: fr-par
+    skeletondirectory:
+  apps:
+    core:
+      backgroundjobs_mode: cron
+
+nc_apps: []
+
+nc_disable_apps: []
+
+nc_remove_apps: []
+
+...

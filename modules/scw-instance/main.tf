@@ -11,7 +11,7 @@ resource "scaleway_instance_server" "server" {
 
 resource "ovh_domain_zone_record" "pub" {
   zone      = var.zone
-  subdomain = format("%s.pub", var.name)
+  subdomain = var.name
   fieldtype = "A"
   ttl       = "60"
   target    = scaleway_instance_server.server.public_ip
@@ -23,4 +23,12 @@ resource "ovh_domain_zone_record" "priv" {
   fieldtype = "A"
   ttl       = "60"
   target    = scaleway_instance_server.server.private_ip
+}
+
+resource "ovh_domain_zone_record" "spf" {
+  zone      = var.zone
+  subdomain = var.name
+  fieldtype = "TXT"
+  ttl       = "600"
+  target    = "v=spf1 mx a ~all"
 }

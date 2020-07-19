@@ -1,0 +1,137 @@
+---
+
+- name: install packages
+  apt:
+    force_apt_get: true
+    install_recommends: false
+    name: "{{ certbot_packages }}"
+
+# CONFIGURATION
+
+- name: ensure config directory exists
+  file:
+    path: /etc/letsencrypt
+    state: directory
+
+- name: ovh api config
+  copy:
+    dest: /etc/letsencrypt/ovh.ini
+    mode: 0600
+    content: |
+      dns_ovh_endpoint = {{ certbot_ovh_endpoint }}
+      dns_ovh_application_key = {{ certbot_ovh_application_key }}
+      dns_ovh_application_secret = {{ certbot_ovh_application_secret }}
+      dns_ovh_consumer_key = {{ certbot_ovh_consumer_key }}
+
+- name: ensure hooks directories exist
+  loop:
+    - /etc/letsencrypt/renewal-hook/deploy
+  file:
+    path: "{{ item }}"
+    state: directory
+
+- name: get installed packages list
+  package_facts:
+
+- name: setup nginx hook
+  when: "'nginx' in ansible_facts.packages"
+  copy:
+    dest: /etc/letsencrypt/renewal-hook/deploy/nginx
+    mode: 0755
+    content: |
+      #!/usr/bin/env -S bash -e -u -o pipefail
+      nginx -t
+      systemctl reload nginx.service
+
+- name: setup haproxy hook
+  when: "'haproxy' in ansible_facts.packages"
+  copy:
+    dest: /etc/letsencrypt/renewal-hook/deploy/haproxy
+    mode: 0755
+    content: |
+      #!/usr/bin/env -S bash -e -u -o pipefail
+      cat ${RENEWED_LINEAGE}/fullchain.pem ${RENEWED_LINEAGE}/privkey.pem > ${RENEWED_LINEAGE}/combined.pem
+      chmod 600 ${RENEWED_LINEAGE}/combined.pem
+      if haproxy -c -f /etc/haproxy/haproxy.cfg &>/dev/null; then
+        systemctl reload haproxy.service
+      fi
+
+- name: setup postfix hook
+  when: "'postfix' in ansible_facts.packages"
+  copy:
+    dest: /etc/letsencrypt/renewal-hook/deploy/postfix
+    mode: 0755
+    content: |
+      #!/usr/bin/env -S bash -e -u -o pipefail
+      systemctl reload postfix.service
+
+- name: setup dovecot hook
+  when: "'dovecot-imapd' in ansible_facts.packages"
+  copy:
+    dest: /etc/letsencrypt/renewal-hook/deploy/dovecot
+    mode: 0755
+    content: |
+      #!/usr/bin/env -S bash -e -u -o pipefail
+      ln -sf ${RENEWED_LINEAGE}/fullchain.pem /etc/dovecot/dovecot.pem
+      ln -sf ${RENEWED_LINEAGE}/privkey.pem /etc/dovecot/dovecot.pem
+      systemctl reload dovecot.service
+
+# CERTIFICATES
+
+- name: save domains list in a file
+  register: certbot_save_list
+  copy:
+    dest: /etc/letsencrypt/domains_{{ certbot_domains[0] }}.txt
+    content: "{{ certbot_domains | join(',') }}"
+
+- name: generate certificates - dry-run
+  when:
+    - certbot_domains | length > 0
+    - certbot_save_list is changed
+  register: certbot_dry_run
+  ignore_errors: true
+  command:
+    cmd: >
+      certbot certonly
+      --dry-run
+      --non-interactive --agree-tos --email {{ certbot_email }}
+      --dns-ovh --dns-ovh-credentials /etc/letsencrypt/ovh.ini
+      --expand
+      --domains {{ certbot_domains | join(',') }}
+
+- name: cleanup after dry-run failure
+  when: certbot_dry_run is failed
+  file:
+    path: /etc/letsencrypt/domains_{{ certbot_domains[0] }}.txt
+    state: absent
+
+- name: dry-run failure
+  when: certbot_dry_run is failed
+  fail:
+
+- name: generate certificates
+  when:
+    - certbot_domains | length > 0
+    - certbot_save_list is changed
+    - certbot_dry_run is succeeded
+  register: certbot_run
+  ignore_errors: true
+  command:
+    cmd: >
+      certbot certonly
+      --non-interactive --agree-tos --email {{ certbot_email }}
+      --dns-ovh --dns-ovh-credentials /etc/letsencrypt/ovh.ini
+      --expand
+      --domains {{ certbot_domains | join(',') }}
+
+- name: cleanup after failure
+  when: certbot_run is failed
+  file:
+    path: /etc/letsencrypt/domains_{{ certbot_domains[0] }}.txt
+    state: absent
+
+- name: failure
+  when: certbot_run is failed
+  fail:
+
+...

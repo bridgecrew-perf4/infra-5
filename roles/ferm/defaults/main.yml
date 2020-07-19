@@ -1,0 +1,41 @@
+---
+
+# packages to install
+ferm_packages:
+  - ferm
+
+# enable anti-lockout rule
+ferm_antilockout_enabled: true
+
+# filename into which rules will be written
+# /etc/ferm/{ferm|input|output|forward}.d/<filename>.conf
+ferm_rules_filename: default
+
+# default filtering and logging policy for input traffic
+ferm_input_policy: DROP
+ferm_input_log: true
+ferm_input_log_prefix: "{{ ferm_input_policy }} INPUT "
+
+# input rule
+ferm_input_rules: []
+
+# default filtering and logging for output traffic
+ferm_output_policy: ACCEPT
+ferm_output_log: false
+ferm_output_log_prefix: "{{ ferm_output_policy }} OUTPUT "
+
+# ouput rule
+ferm_output_rules: []
+
+# default filtering and logging for forward traffic
+ferm_forward_policy: DROP
+ferm_forward_log: true
+ferm_forward_log_prefix: "{{ ferm_forward_policy }} FORWARD "
+
+# forward rule
+ferm_forward_rules: []
+
+# global settings to be put in ferm.d directory
+ferm_global_settings:
+
+...

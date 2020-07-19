@@ -1,0 +1,55 @@
+---
+
+rc_ansible_packages:
+  - python3-psycopg2
+rc_apache_mods:
+  - 'deflate'
+  - 'expires'
+  - 'headers'
+  - 'remoteip'
+rc_apache_remoteip: |
+  RemoteIPHeader X-Real-IP
+  {% for proxy in rc_trusted_proxies %}
+  RemoteIPTrustedProxy {{ proxy }}
+  {% endfor %}
+rc_app_path: '/var/www/roundcubemail'
+rc_db_admin: postgres
+rc_db_admin_password:
+rc_db_host: localhost
+rc_db_name: roundcubemail
+rc_db_port: 5432
+rc_db_user: roundcube
+rc_db_user_password:
+rc_domains:
+  - mail.example.net
+rc_packages:
+  - 'apache2'
+  - 'composer'
+  - 'php'
+  - 'php-curl'
+  - 'php-gd'
+  - 'php-imagick'
+  - 'php-intl'
+  - 'php-ldap'
+  - 'php-mbstring'
+  - 'php-pgsql'
+  - 'php-xml'
+  - 'php-zip'
+  - 'sudo'
+rc_plugins:
+  # https://plugins.roundcube.net/packages/roundcube/carddav
+  - 'roundcube/carddav:3.0.3'
+rc_trusted_proxies: []
+rc_url: 'https://github.com/roundcube/roundcubemail/releases/download/{{ rc_version }}/roundcubemail-{{ rc_version }}-complete.tar.gz'
+rc_version: '1.4.7'
+rc_apache_vhost: |
+  <VirtualHost *:80>
+    DocumentRoot {{ rc_app_path }}/
+    ServerName {{ rc_domains[0] }}
+    ServerAlias {{ rc_domains | join(' ') }}
+
+    <Directory {{ rc_app_path }}/>
+      Require all granted
+      AllowOverride All
+    </Directory>
+  </VirtualHost>

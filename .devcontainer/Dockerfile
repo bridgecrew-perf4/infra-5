@@ -43,7 +43,7 @@ RUN \
         && \
     :
 
-ENV TERRAFORM_VERSION 0.12.26
+ENV TERRAFORM_VERSION 0.12.28
 RUN \
     # terraform
     # import hashicorp gpg key
@@ -57,7 +57,7 @@ RUN \
     sudo rm -f terraform_${TERRAFORM_VERSION}* && \
     :
 
-ENV TFLINT_VERSION 0.16.1
+ENV TFLINT_VERSION 0.17.0
 RUN \
     # tflint
     sudo curl -LOSs https://github.com/terraform-linters/tflint/releases/download/v${TFLINT_VERSION}/tflint_linux_amd64.zip && \

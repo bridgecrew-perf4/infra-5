@@ -1,0 +1,42 @@
+---
+
+grocy_apache_mods:
+  - 'remoteip'
+  - 'rewrite'
+grocy_apache_remoteip: |
+  RemoteIPHeader X-Real-IP
+  {% for proxy in grocy_trusted_proxies %}
+  RemoteIPTrustedProxy {{ proxy }}
+  {% endfor %}
+grocy_apache_vhost: |
+  <VirtualHost *:80>
+    DocumentRoot {{ grocy_app_path }}/public
+    ServerName {{ grocy_domain }}
+
+    <Directory {{ grocy_app_path }}/public>
+      AllowOverride All
+    </Directory>
+  </VirtualHost>
+grocy_app_path: /var/www/grocy
+grocy_domain: grocy.example.net
+grocy_features:
+  stock: true
+  shoppinglist: true
+  recipes: true
+  chores: true
+  tasks: true
+  batteries: true
+  equipment: true
+  calendar: true
+grocy_packages:
+  - 'apache2'
+  - 'php'
+  - 'php-gd'
+  - 'php-sqlite3'
+  - 'unzip'
+grocy_settings:
+  lang: 'en'
+  currency: 'USD'
+grocy_trusted_proxies: []
+grocy_url: 'https://releases.grocy.info/v?{{ grocy_version }}'
+grocy_version: '2.7.1'

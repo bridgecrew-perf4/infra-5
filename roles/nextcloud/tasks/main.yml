@@ -1,0 +1,271 @@
+---
+
+# SYSTEM
+
+- name: install ansible requirements
+  apt:
+    force_apt_get: true
+    install_recommends: false
+    name: "{{ nc_ansible_packages }}"
+
+- name: install packages
+  notify: restart apache
+  apt:
+    force_apt_get: true
+    install_recommends: false
+    name: "{{ nc_packages }}"
+
+- name: ensure group exists
+  when: nc_group != "www-data"
+  group:
+    name: "{{ nc_group }}"
+    system: true
+
+- name: ensure user exists
+  when: nc_user != "www-data"
+  user:
+    name: "{{ nc_user }}"
+    shell: /usr/sbin/nologin
+    system: true
+    group: "{{ nc_group }}"
+    password_lock: true
+    home: "{{ nc_home_path }}"
+
+- name: ensure directories exist
+  loop:
+    - "{{ nc_app_path }}"
+    - "{{ nc_data_path }}"
+  file:
+    path: "{{ item }}"
+    group: "{{ nc_group }}"
+    owner: "{{ nc_user }}"
+    state: directory
+
+# DATABASE
+
+- name: create database user
+  no_log: true
+  postgresql_user:
+    login_host: "{{ nc_db_host }}"
+    login_port: "{{ nc_db_port }}"
+    login_user: "{{ nc_db_admin }}"
+    login_password: "{{ nc_db_admin_password }}"
+    name: "{{ nc_db_user }}"
+    password: "{{ nc_db_user_password }}"
+
+- name: create database
+  no_log: true
+  register: nc_db_create
+  postgresql_db:
+    login_host: "{{ nc_db_host }}"
+    login_port: "{{ nc_db_port }}"
+    login_user: "{{ nc_db_admin }}"
+    login_password: "{{ nc_db_admin_password }}"
+    name: "{{ nc_db_name }}"
+    owner: "{{ nc_db_user }}"
+
+# NEXTCLOUD
+
+- name: download archive
+  register: nc_download
+  get_url:
+    url: https://download.nextcloud.com/server/releases/nextcloud-{{ nc_version }}.tar.bz2
+    checksum: sha256:https://download.nextcloud.com/server/releases/nextcloud-{{ nc_version }}.tar.bz2.sha256
+    dest: "{{ nc_home_path }}/nextcloud-{{ nc_version }}.tar.bz2"
+
+- name: backup config
+  when: nc_download is changed
+  command:
+    cmd: mv -f {{ nc_app_path }}/config/config.php {{ nc_home_path }}/config.php
+    removes: "{{ nc_app_path }}/config/config.php"
+
+- name: remove current version
+  when: nc_download is changed
+  file:
+    path: "{{ nc_app_path }}"
+    state: absent
+
+- name: extract archive
+  when: nc_download is changed
+  unarchive:
+    remote_src: true
+    src: "{{ nc_home_path }}/nextcloud-{{ nc_version }}.tar.bz2"
+    dest: "{{ nc_home_path }}"
+    owner: "{{ nc_user }}"
+    group: "{{ nc_group }}"
+
+- name: restore config
+  when: nc_download is changed
+  command:
+    cmd: mv -f {{ nc_home_path }}/config.php {{ nc_app_path }}/config/config.php
+    removes: "{{ nc_home_path }}/config.php"
+
+- name: populate database
+  become: true
+  become_user: "{{ nc_user }}"
+  when: nc_db_create is changed
+  command:
+    chdir: "{{ nc_app_path }}"
+    cmd: >
+      php occ maintenance:install
+      --database "pgsql"
+      --database-name "{{ nc_db_name }}"
+      --database-host "{{ nc_db_host }}"
+      --database-port "{{ nc_db_port }}"
+      --database-user "{{ nc_db_user }}"
+      --database-pass "{{ nc_db_user_password }}"
+      --admin-user "{{ nc_admin }}"
+      --admin-pass "{{ nc_admin_password }}"
+      --data-dir "{{ nc_data_path }}"
+      --no-interaction
+
+- name: update import configuration
+  register: nc_config_import
+  copy:
+    dest: "{{ nc_home_path }}/nextcloud-config.json"
+    content: "{{ nc_config | to_nice_json }}"
+    owner: "{{ nc_user }}"
+    group: "{{ nc_group }}"
+
+- name: import configuration
+  become: true
+  become_user: "{{ nc_user }}"
+  when: nc_config_import is changed
+  notify: update htaccess
+  command:
+    chdir: "{{ nc_app_path }}"
+    cmd: php occ config:import --no-interaction ../nextcloud-config.json
+
+- name: upgrade
+  become: true
+  become_user: "{{ nc_user }}"
+  when: nc_download is changed
+  shell:
+    chdir: "{{ nc_app_path }}"
+    cmd: |
+      php occ upgrade --no-interaction ;
+      php occ db:add-missing-indices --no-interaction ;
+      php occ db:convert-filecache-bigint --no-interaction ;
+
+# APPS
+
+- name: save apps list
+  register: nc_apps_list
+  copy:
+    dest: "{{ nc_home_path }}/nextcloud-apps.txt"
+    content: "{{ nc_apps | join(',') }}"
+    owner: "{{ nc_user }}"
+    group: "{{ nc_group }}"
+
+- name: install apps
+  become: true
+  become_user: "{{ nc_user }}"
+  when: nc_apps_list is changed
+  register: nc_app_install
+  changed_when: '"already installed" not in nc_app_install.stdout'
+  failed_when:
+    - nc_app_install.rc == 1
+    - '"already installed" not in nc_app_install.stdout'
+  loop: "{{ nc_apps }}"
+  command:
+    chdir: "{{ nc_app_path }}"
+    cmd: php occ app:install --no-interaction --keep-disabled {{ item }}
+
+- name: enable apps
+  become: true
+  become_user: "{{ nc_user }}"
+  when: nc_apps_list is changed
+  loop: "{{ nc_apps }}"
+  command:
+    chdir: "{{ nc_app_path }}"
+    cmd: php occ app:enable --no-interaction {{ item }}
+
+- name: disable apps
+  become: true
+  become_user: "{{ nc_user }}"
+  ignore_errors: true
+  loop: "{{ nc_disable_apps }}"
+  register: nc_disable
+  changed_when: nc_disable.stdout == "{{ item }} disabled"
+  command:
+    chdir: "{{ nc_app_path }}"
+    cmd: php occ app:disable --no-interaction {{ item }}
+
+- name: remove apps
+  become: true
+  become_user: "{{ nc_user }}"
+  ignore_errors: true
+  loop: "{{ nc_remove_apps }}"
+  command:
+    chdir: "{{ nc_app_path }}"
+    cmd: php occ app:remove --no-interaction {{ item }}
+
+- name: update apps
+  become: true
+  become_user: "{{ nc_user }}"
+  register: nc_update_apps
+  changed_when: nc_update_apps.stdout | d(false)
+  command:
+    chdir: "{{ nc_app_path }}"
+    cmd: php occ app:update --all --no-interaction
+
+# SYSTEM CONFIGURATION
+
+- name: remove default vhost
+  notify: restart apache
+  file:
+    path: /etc/apache2/sites-enabled/000-default.conf
+    state: absent
+
+- name: enable required apache modules
+  notify: restart apache
+  loop: "{{ nc_apache_mods }}"
+  apache2_module:
+    name: "{{ item }}"
+
+- meta: flush_handlers
+
+- name: configure vhost
+  notify: restart apache
+  copy:
+    dest: /etc/apache2/sites-available/nextcloud.conf
+    content: "{{ nc_apache_vhost }}"
+
+- name: enable vhost
+  notify: restart apache
+  command:
+    cmd: a2ensite nextcloud.conf
+    creates: /etc/apache2/sites-enabled/nextcloud.conf
+
+- name: configure remoteip
+  when: nc_trusted_proxies | length > 0
+  notify: restart apache
+  copy:
+    dest: /etc/apache2/conf-available/remoteip.conf
+    content: "{{ nc_apache_remoteip }}"
+
+- name: enable remoteip
+  when: nc_trusted_proxies | length > 0
+  notify: restart apache
+  command:
+    cmd: a2enconf remoteip.conf
+    creates: /etc/apache2/conf-enabled/remoteip.conf
+
+- name: setup timer and service
+  notify:
+    - reload systemd
+    - run cron
+  loop:
+    - nextcloud-cron.service
+    - nextcloud-cron.timer
+  template:
+    src: "{{ item }}"
+    dest: /etc/systemd/system/{{ item }}
+
+- name: enable timer
+  systemd:
+    name: nextcloud-cron.timer
+    enabled: true
+    state: started
+
+...

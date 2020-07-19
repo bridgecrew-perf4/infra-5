@@ -1,0 +1,10 @@
+[Unit]
+Description=Nextcloud cron.php job
+
+[Service]
+User={{ nc_user }}
+Group={{ nc_group }}
+ExecStart=/usr/bin/php -f {{ nc_app_path }}/cron.php
+
+[Install]
+WantedBy=basic.target

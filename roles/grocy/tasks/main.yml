@@ -1,0 +1,103 @@
+---
+
+- name: 'install packages'
+  notify: 'restart apache'
+  apt:
+    force_apt_get: true
+    install_recommends: false
+    name: '{{ grocy_packages }}'
+
+# APPLICATION
+
+- name: 'download archive'
+  register: 'grocy_download'
+  get_url:
+    url: '{{ grocy_url }}'
+    dest: '{{ grocy_app_path | dirname }}/grocy-{{ grocy_version }}.zip'
+
+- name: 'backup data'
+  when: 'grocy_download is changed'
+  command:
+    cmd: 'mv --force {{ grocy_app_path }}/data {{ grocy_app_path | dirname }}/grocy-data'
+    removes: '{{ grocy_app_path }}/data'
+
+- name: 'remove current version'
+  when: 'grocy_download is changed'
+  file:
+    path: '{{ grocy_app_path }}'
+    state: absent
+
+- name: 'create application directory'
+  file:
+    path: '{{ grocy_app_path }}'
+    state: 'directory'
+
+- name: 'extract archive'
+  when: 'grocy_download is changed'
+  unarchive:
+    remote_src: true
+    src: '{{ grocy_app_path | dirname }}/grocy-{{ grocy_version }}.zip'
+    dest: '{{ grocy_app_path }}'
+
+- name: 'restore data'
+  when: 'grocy_download is changed'
+  command:
+    cmd: 'mv --force --no-target-directory {{ grocy_app_path | dirname }}/grocy-data {{ grocy_app_path }}/data'
+    removes: '{{ grocy_app_path | dirname }}/data'
+
+- name: 'fix data permissions'
+  file:
+    path: '{{ grocy_app_path }}/data'
+    owner: 'www-data'
+    group: 'www-data'
+    recurse: true
+    state: 'directory'
+
+- name: 'configure settings'
+  template:
+    src: 'config.php'
+    dest: '{{ grocy_app_path }}/data/config.php'
+    owner: 'www-data'
+    group: 'www-data'
+
+# SYSTEM CONFIGURATION
+
+- name: 'remove default vhost'
+  notify: 'restart apache'
+  file:
+    path: '/etc/apache2/sites-enabled/000-default.conf'
+    state: 'absent'
+
+- name: 'enable required apache modules'
+  notify: 'restart apache'
+  loop: '{{ grocy_apache_mods }}'
+  apache2_module:
+    name: '{{ item }}'
+
+- meta: 'flush_handlers'
+
+- name: 'configure vhost'
+  notify: 'restart apache'
+  copy:
+    dest: '/etc/apache2/sites-available/grocy.conf'
+    content: '{{ grocy_apache_vhost }}'
+
+- name: 'enable vhost'
+  notify: 'restart apache'
+  command:
+    cmd: 'a2ensite grocy.conf'
+    creates: '/etc/apache2/sites-enabled/grocy.conf'
+
+- name: 'configure remoteip'
+  when: 'grocy_trusted_proxies | length > 0'
+  notify: 'restart apache'
+  copy:
+    dest: '/etc/apache2/conf-available/remoteip.conf'
+    content: '{{ grocy_apache_remoteip }}'
+
+- name: 'enable remoteip'
+  when: 'grocy_trusted_proxies | length > 0'
+  notify: 'restart apache'
+  command:
+    cmd: 'a2enconf remoteip.conf'
+    creates: '/etc/apache2/conf-enabled/remoteip.conf'

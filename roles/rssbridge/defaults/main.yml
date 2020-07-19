@@ -1,0 +1,45 @@
+---
+
+rssbr_apache_mods:
+  - 'remoteip'
+rssbr_apache_remoteip: |
+  RemoteIPHeader X-Real-IP
+  {% for proxy in rssbr_trusted_proxies %}
+  RemoteIPTrustedProxy {{ proxy }}
+  {% endfor %}
+rssbr_apache_vhost: |
+  <VirtualHost *:80>
+    DocumentRoot {{ rssbr_app_path }}
+    ServerName {{ rssbr_domain }}
+
+    <Directory {{ rssbr_app_path }}>
+      AllowOverride All
+    </Directory>
+  </VirtualHost>
+rssbr_app_name: 'rssbridge'
+rssbr_app_path: '/var/www/{{ rssbr_app_name }}'
+rssbr_bridges:
+  - 'Facebook'
+  - 'GoogleSearch'
+  - 'Instagram'
+  - 'Pinterest'
+  - 'Twitter'
+  - 'Wikipedia'
+  - 'Youtube'
+rssbr_domain: 'rssbr.example.net'
+rssbr_packages:
+  - 'apache2'
+  - 'libapache2-mod-php'
+  - 'php'
+  - 'php-xml'
+  - 'php-mbstring'
+  - 'php-sqlite3'
+  - 'php-curl'
+  - 'php-json'
+rssbr_settings:
+  - section: 'cache'
+    option: 'type'
+    value: '"sqlite"'
+rssbr_trusted_proxies: []
+rssbr_url: 'https://github.com/RSS-Bridge/rss-bridge.git'
+rssbr_version: '2020-02-26'

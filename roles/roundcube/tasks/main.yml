@@ -1,0 +1,117 @@
+---
+
+# SYSTEM
+
+- name: install ansible requirements
+  apt:
+    force_apt_get: true
+    install_recommends: false
+    name: "{{ rc_ansible_packages }}"
+
+- name: 'install packages'
+  notify: 'restart apache'
+  apt:
+    force_apt_get: true
+    install_recommends: false
+    name: '{{ rc_packages }}'
+
+# DATABASE
+
+- name: create database user
+  no_log: true
+  postgresql_user:
+    login_host: "{{ rc_db_host }}"
+    login_port: "{{ rc_db_port }}"
+    login_user: "{{ rc_db_admin }}"
+    login_password: "{{ rc_db_admin_password }}"
+    name: "{{ rc_db_user }}"
+    password: "{{ rc_db_user_password }}"
+
+- name: create database
+  no_log: true
+  register: rc_db_create
+  postgresql_db:
+    login_host: "{{ rc_db_host }}"
+    login_port: "{{ rc_db_port }}"
+    login_user: "{{ rc_db_admin }}"
+    login_password: "{{ rc_db_admin_password }}"
+    name: "{{ rc_db_name }}"
+    owner: "{{ rc_db_user }}"
+
+# ROUNDCUBE
+
+- name: 'download archive'
+  register: 'rc_download'
+  get_url:
+    dest: '{{ rc_app_path | dirname }}/roundcubemail-{{ rc_version }}-complete.tar.gz'
+    url: '{{ rc_url }}'
+
+- name: 'create application directory'
+  file:
+    group: 'www-data'
+    owner: 'www-data'
+    path: '{{ rc_app_path }}'
+    state: 'directory'
+
+- name: 'extract archive'
+  when: 'rc_download is changed'
+  unarchive:
+    dest: '{{ rc_app_path }}'
+    extra_opts:
+      - '--strip-components=1'
+    group: 'www-data'
+    owner: 'www-data'
+    remote_src: true
+    src: '{{ rc_app_path | dirname }}/roundcubemail-{{ rc_version }}-complete.tar.gz'
+
+- name: 'install composer packages'
+  become: true
+  become_user: 'www-data'
+  loop: '{{ rc_plugins }}'
+  composer:
+    arguments: '{{ item }}'
+    command: 'require'
+    no_dev: true
+    working_dir: '{{ rc_app_path }}'
+
+# SYSTEM CONFIGURATION
+
+- name: 'remove default vhost'
+  notify: 'restart apache'
+  file:
+    path: '/etc/apache2/sites-enabled/000-default.conf'
+    state: 'absent'
+
+- name: 'enable required apache modules'
+  notify: 'restart apache'
+  loop: '{{ rc_apache_mods }}'
+  apache2_module:
+    name: '{{ item }}'
+
+- meta: 'flush_handlers'
+
+- name: 'configure vhost'
+  notify: 'restart apache'
+  copy:
+    dest: '/etc/apache2/sites-available/roundcube.conf'
+    content: '{{ rc_apache_vhost }}'
+
+- name: 'enable vhost'
+  notify: 'restart apache'
+  command:
+    cmd: 'a2ensite roundcube.conf'
+    creates: '/etc/apache2/sites-enabled/roundcude.conf'
+
+- name: 'configure remoteip'
+  when: 'rc_trusted_proxies | length > 0'
+  notify: 'restart apache'
+  copy:
+    dest: '/etc/apache2/conf-available/remoteip.conf'
+    content: '{{ rc_apache_remoteip }}'
+
+- name: 'enable remoteip'
+  when: 'rc_trusted_proxies | length > 0'
+  notify: 'restart apache'
+  command:
+    cmd: 'a2enconf remoteip.conf'
+    creates: '/etc/apache2/conf-enabled/remoteip.conf'

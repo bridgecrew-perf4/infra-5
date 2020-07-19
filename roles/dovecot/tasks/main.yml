@@ -1,0 +1,126 @@
+---
+
+- name: install packages
+  apt:
+    force_apt_get: true
+    install_recommends: false
+    name: "{{ imap_packages }}"
+
+- name: create vmail group
+  register: imap_group
+  group:
+    name: vmail
+    system: yes
+
+- name: create vmail user
+  register: imap_user
+  user:
+    name: vmail
+    group: vmail
+    comment: Virtual Mail Handler
+    home: /var/mail/vhosts
+    shell: /usr/sbin/nologin
+    system: yes
+
+- name: create vmail directories
+  loop:
+    - /var/mail/vhosts
+    - /var/mail/vhosts/sieve
+    - /var/mail/vhosts/sieve/global
+    - /var/mail/attachments
+  file:
+    path: "{{ item }}"
+    owner: vmail
+    group: vmail
+    mode: 0770
+    state: directory
+
+- name: configure imap server
+  notify: restart imap server
+  loop:
+    - conf.d/10-auth.conf
+    - conf.d/10-mail.conf
+    - conf.d/10-master.conf
+    - conf.d/10-ssl.conf
+    - conf.d/15-mailboxes.conf
+    - conf.d/20-imap.conf
+    - conf.d/20-lmtp.conf
+    - conf.d/20-managesieve.conf
+    - conf.d/90-quota.conf
+    - conf.d/90-sieve.conf
+    - dovecot-dict-sql.conf.ext
+    - dovecot-sql.conf.ext
+    - dovecot.conf
+  template:
+    src: "{{ item }}.j2"
+    dest: /etc/dovecot/{{ item }}
+
+- name: quota warning script
+  template:
+    src: quota-warning.sh.j2
+    dest: /etc/dovecot/quota-warning.sh
+    mode: 0755
+
+- name: global check spam sieve script
+  notify: compile check spam script
+  copy:
+    dest: /var/mail/vhosts/sieve/global/check-spam.sieve
+    owner: vmail
+    group: vmail
+    content: |
+      require ["fileinto","mailbox"];
+
+      if anyof(
+          header :contains ["X-Spam-Flag"] "YES",
+          header :contains ["X-Spam"] "Yes",
+          header :contains ["Subject"] "*** SPAM ***"
+          )
+      {
+          fileinto :create "Junk";
+          stop;
+      }
+
+- name: global learn spam sieve script
+  notify: compile learn spam script
+  copy:
+    dest: /var/mail/vhosts/sieve/global/report-spam.sieve
+    owner: vmail
+    group: vmail
+    content: |
+      require ["vnd.dovecot.pipe", "copy", "imapsieve"];
+      pipe :copy "rspamc" ["learn_spam"];
+
+- name: global learn ham sieve script
+  notify: compile learn ham script
+  copy:
+    dest: /var/mail/vhosts/sieve/global/report-ham.sieve
+    owner: vmail
+    group: vmail
+    content: |
+      require ["vnd.dovecot.pipe", "copy", "imapsieve"];
+      pipe :copy "rspamc" ["learn_ham"];
+
+- name: update certificates links
+  notify: restart imap server
+  loop:
+    - link: /etc/dovecot/private/dovecot.key
+      source: "{{ imap_tls_key }}"
+    - link: /etc/dovecot/private/dovecot.pem
+      source: "{{ imap_tls_cert }}"
+  file:
+    src: "{{ item.source }}"
+    dest: "{{ item.link }}"
+    force: true
+    state: link
+
+- name: expunge trash cronjob
+  cron:
+    job: '/usr/bin/doveadm expunge -A mailbox Trash savedbefore 14d'
+    name: 'expunge trash'
+    special_time: 'daily'
+
+- name: expunge junk cronjob
+  cron:
+    job: '/usr/bin/doveadm expunge -A mailbox Junk savedbefore 14d'
+    name: 'expunge junk'
+    special_time: 'daily'

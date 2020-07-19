@@ -1,0 +1,162 @@
+---
+
+# SYSTEM
+
+- name: install ansible requirements
+  apt:
+    force_apt_get: true
+    install_recommends: false
+    name:
+      - git
+      - python3-psycopg2
+
+- name: install packages
+  notify: restart apache
+  apt:
+    force_apt_get: true
+    install_recommends: false
+    name: "{{ bag_packages }}"
+
+# DATABASE
+
+- name: create database user
+  no_log: true
+  postgresql_user:
+    login_host: "{{ bag_db_host }}"
+    login_port: "{{ bag_db_port }}"
+    login_user: "{{ bag_db_admin }}"
+    login_password: "{{ bag_db_admin_password }}"
+    name: "{{ bag_db_user }}"
+    password: "{{ bag_db_user_password }}"
+
+- name: create database
+  no_log: true
+  register: bag_db_create
+  postgresql_db:
+    login_host: "{{ bag_db_host }}"
+    login_port: "{{ bag_db_port }}"
+    login_user: "{{ bag_db_admin }}"
+    login_password: "{{ bag_db_admin_password }}"
+    name: "{{ bag_db_dbname }}"
+    owner: "{{ bag_db_user }}"
+
+# APPLICATION
+
+- name: create wallabag directory
+  file:
+    path: "{{ bag_path }}"
+    owner: www-data
+    group: www-data
+    state: directory
+
+- name: clone wallabag repository
+  become: true
+  become_user: www-data
+  register: bag_git_repo
+  git:
+    repo: "{{ bag_repo }}"
+    version: "{{ bag_version }}"
+    dest: "{{ bag_path }}"
+
+- name: configure settings
+  when: bag_git_repo is changed
+  become: true
+  become_user: www-data
+  template:
+    src: parameters.yml
+    dest: "{{ bag_path }}/app/config/parameters.yml"
+    force: false
+    owner: www-data
+    group: www-data
+
+- name: run composer install
+  when: bag_git_repo is changed
+  become: true
+  become_user: www-data
+  environment:
+    SYMFONY_ENV: prod
+  command:
+    chdir: "{{ bag_path }}"
+    cmd: composer install --no-dev --no-progress --optimize-autoloader --prefer-dist --no-interaction
+
+- name: run database migrations
+  when: bag_git_repo is changed
+  become: true
+  become_user: www-data
+  command:
+    chdir: "{{ bag_path }}"
+    cmd: bin/console doctrine:schema:create --env=prod --no-interaction
+
+- name: run wallabag install
+  when: bag_git_repo is changed
+  become: true
+  become_user: www-data
+  command:
+    chdir: "{{ bag_path }}"
+    cmd: bin/console wallabag:install --env=prod --no-interaction
+
+# - name: run database migrations
+#   when: bag_git_repo is changed
+#   become: true
+#   become_user: www-data
+#   command:
+#     chdir: "{{ bag_path }}"
+#     cmd: bin/console doctrine:migrations:migrate --env=prod --no-interaction
+
+- name: clear cache
+  when: bag_git_repo is changed
+  become: true
+  become_user: www-data
+  command:
+    chdir: "{{ bag_path }}"
+    cmd: bin/console cache:clear --env=prod --no-interaction
+
+- name: create worker template service
+  notify: restart workers
+  template:
+    src: wallabag-worker@.service
+    dest: /etc/systemd/system/wallabag-worker@.service
+
+# SYSTEM CONFIGURATION
+
+- name: remove default vhost
+  notify: restart apache
+  file:
+    path: /etc/apache2/sites-enabled/000-default.conf
+    state: absent
+
+- name: enable required apache modules
+  notify: restart apache
+  loop: "{{ bag_apache_mods }}"
+  apache2_module:
+    name: "{{ item }}"
+
+- meta: flush_handlers
+
+- name: configure vhost
+  notify: restart apache
+  copy:
+    dest: /etc/apache2/sites-available/wallabag.conf
+    content: "{{ bag_apache_vhost }}"
+
+- name: enable vhost
+  notify: restart apache
+  command:
+    cmd: a2ensite wallabag.conf
+    creates: /etc/apache2/sites-enabled/wallabag.conf
+
+- name: configure remoteip
+  when: bag_trusted_proxies | length > 0
+  notify: restart apache
+  copy:
+    dest: /etc/apache2/conf-available/remoteip.conf
+    content: "{{ bag_apache_remoteip }}"
+
+- name: enable remoteip
+  when: bag_trusted_proxies | length > 0
+  notify: restart apache
+  command:
+    cmd: a2enconf remoteip.conf
+    creates: /etc/apache2/conf-enabled/remoteip.conf
+
+...

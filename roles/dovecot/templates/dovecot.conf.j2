@@ -1,0 +1,4 @@
+protocols = {{ imap_protocols | join(' ') }}
+
+!include conf.d/*.conf
+!include_try local.conf

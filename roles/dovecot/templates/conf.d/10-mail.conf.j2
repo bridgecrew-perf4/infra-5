@@ -1,0 +1,21 @@
+mail_uid = {{ imap_user.name }}
+first_valid_uid = {{ imap_user.uid }}
+last_valid_uid = {{ imap_user.uid }}
+
+mail_gid = {{ imap_group.name }}
+first_valid_gid = {{ imap_group.gid }}
+last_valid_gid = {{ imap_group.gid }}
+
+mail_location = mdbox:~/mdbox
+
+namespace inbox {
+  separator = /
+  inbox = yes
+}
+
+mail_privileged_group = {{ imap_group.name }}
+
+mail_attachment_dir = /var/mail/attachments
+mail_attachment_min_size = 64k
+
+mail_plugins = quota

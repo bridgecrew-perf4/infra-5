@@ -1,0 +1,14 @@
+{% for rule in lookup('vars', 'ferm_' + item + '_rules') %}
+{% if rule.content | d() %}{{ rule.content }}{% else %}
+{% if rule.mod | d() %}mod {{ rule.mod }} {% endif %}
+{% if rule.helper | d() %}helper {{ rule.helper }} {% endif %}
+{% if rule.interface | d() %}interface @ipfilter(({{ rule.interface | join(' ') }})) {% endif %}
+{% if rule.outerface | d() %}outerface @ipfilter(({{ rule.outerface | join(' ') }})) {% endif %}
+{% if rule.saddr | d() %}saddr @ipfilter(({{ rule.saddr | join(' ') }})) {% endif %}
+{% if rule.daddr | d() %}daddr @ipfilter(({{ rule.daddr | join(' ') }})) {% endif %}
+{% if rule.proto | d() %}proto ({{ rule.proto | join(' ') }}) {% endif %}
+{% if rule.dport | d() %}dport ({{ rule.dport | join(' ') }}) {% endif %}
+{% if rule.sport | d() %}sport ({{ rule.sport | join(' ') }}) {% endif %}
+{{ rule.policy | d('ACCEPT') | upper }};
+{% endif %}
+{% endfor %}

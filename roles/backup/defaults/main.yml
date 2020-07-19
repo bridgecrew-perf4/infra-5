@@ -1,0 +1,16 @@
+---
+
+bkp_packages:
+  - backupninja
+  - unzip
+
+bkp_jobs: []
+
+bkp_restic_version: 0.9.6
+bkp_restic_password:
+bkp_restic_repository:
+bkp_restic_s3_access_key:
+bkp_restic_s3_secret_key:
+bkp_restic_s3_region:
+
+...

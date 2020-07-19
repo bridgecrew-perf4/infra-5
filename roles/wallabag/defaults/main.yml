@@ -1,0 +1,96 @@
+---
+
+# SYSTEM
+
+bag_packages:
+  - apache2
+  - composer
+  - libapache2-mod-php
+  - php-bcmath
+  - php-curl
+  - php-gd
+  - php-gettext
+  - php-intl
+  - php-pgsql
+  - php-tidy
+  - php-tokenizer
+  - php-xml
+
+# APPLICATION
+
+bag_repo: https://github.com/wallabag/wallabag.git
+bag_version: 2.3.8
+bag_path: /var/www/wallabag
+
+bag_db_host: localhost
+bag_db_port: 5432
+bag_db_admin: postgres
+bag_db_admin_password:
+bag_db_dbname: wallabag
+bag_db_user: wallabag
+bag_db_user_password:
+bag_db_prefix: bag_
+bag_db_charset: utf8
+
+bag_redis_host: localhost
+bag_redis_port: 6379
+bag_redis_password:
+
+bag_domain_name: bag.example.net
+
+bag_smtp_host:
+bag_smtp_port:
+bag_smtp_user:
+bag_smtp_password:
+bag_smtp_from: noreply@example.net
+
+bag_locale: en
+
+bag_secret: changemewithrandomstring
+
+bag_import_services:
+  - pocket
+  - readability
+  - instapaper
+  - wallabag_v1
+  - wallabag_v2
+  - firefox
+  - chrome
+
+# APACHE
+
+bag_trusted_proxies: []
+
+bag_apache_vhost: |
+  <VirtualHost *:80>
+    ServerName {{ bag_domain_name }}
+
+    DocumentRoot {{ bag_path }}/web
+
+    <Directory {{ bag_path }}/web>
+      Require all granted
+
+      Options +SymLinksIfOwnerMatch
+      Options -MultiViews
+
+      RewriteEngine On
+      RewriteCond %{REQUEST_FILENAME} !-f
+      RewriteRule ^(.*)$ app.php [QSA,L]
+    </Directory>
+
+    <Directory {{ bag_path }}/web/bundles>
+      RewriteEngine Off
+    </Directory>
+  </VirtualHost>
+
+bag_apache_remoteip: |
+  RemoteIPHeader X-Real-IP
+  {% for proxy in bag_trusted_proxies %}
+  RemoteIPTrustedProxy {{ proxy }}
+  {% endfor %}
+
+bag_apache_mods:
+  - remoteip
+  - rewrite
+
+...

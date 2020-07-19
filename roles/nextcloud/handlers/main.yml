@@ -1,0 +1,24 @@
+---
+
+- name: reload systemd
+  systemd:
+    daemon_reload: true
+
+- name: run cron
+  systemd:
+    name: nextcloud-cron.service
+    state: started
+
+- name: restart apache
+  systemd:
+    name: apache2
+    state: restarted
+
+- name: update htaccess
+  become: true
+  become_user: "{{ nc_user }}"
+  command:
+    chdir: "{{ nc_app_path }}"
+    cmd: php occ maintenance:update:htaccess --no-interaction
+
+...

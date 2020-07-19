@@ -1,0 +1,12 @@
+---
+
+- name: rebuild aliases
+  command:
+    cmd: postalias /etc/aliases
+
+- name: restart smtp server
+  systemd:
+    name: postfix
+    state: restarted
+
+...

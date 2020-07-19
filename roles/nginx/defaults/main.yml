@@ -1,0 +1,67 @@
+---
+
+# configuration directories
+nginx_base_dir: /etc/nginx
+nginx_conf_dir: /etc/nginx/conf.d
+nginx_global_dir: "{{ nginx_conf_dir }}/global"
+nginx_http_dir: "{{ nginx_conf_dir }}/http"
+nginx_stream_dir: "{{ nginx_conf_dir }}/stream"
+nginx_snippet_dir: "{{ nginx_conf_dir }}/snippet"
+
+# directories list, for creation
+nginx_dirs:
+  - "{{ nginx_conf_dir }}"
+  - "{{ nginx_global_dir }}"
+  - "{{ nginx_http_dir }}"
+  - "{{ nginx_stream_dir }}"
+  - "{{ nginx_snippet_dir }}"
+
+# configurations to be included in global scope
+nginx_global: []
+
+# configurations to be included in http scope
+nginx_http:
+  - name: default
+    content: |
+      server {
+        listen 80 default_server;
+        server_name _;
+
+        root /usr/share/nginx/html;
+
+        error_page 404 /404.html;
+        error_page 500 502 503 504 /50x.html;
+
+        location / {}
+
+        location /404.html {}
+
+        location /50x.html {}
+      }
+
+# configurations to be included in stream scope
+nginx_stream: []
+
+# snippets that may be reused in other configurations files
+nginx_snippet: []
+
+# nginx.conf
+nginx_user: www-data
+nginx_worker_processes: auto
+nginx_error_log: /var/log/nginx/error.log
+nginx_pid: /run/nginx.pid
+nginx_include_dynamic_modules: /etc/nginx/modules-enabled/*.conf
+nginx_worker_connections: 1024
+nginx_log_format:
+  - name: main
+    string: $remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent "$http_referer" "$http_user_agent" "$http_x_forwarded_for"
+nginx_access_log:
+  path: /var/log/nginx/access.log
+  format: main
+nginx_include_mime_types: /etc/nginx/mime.types
+nginx_default_type: application/octet-stream
+nginx_include_global_dir: "{{ nginx_global_dir }}/*.conf"
+nginx_include_http_dir: "{{ nginx_http_dir }}/*.conf"
+nginx_include_stream_dir: "{{ nginx_stream_dir }}/*.conf"
+
+...

@@ -1,0 +1,61 @@
+---
+
+- name: install
+  apt:
+    force_apt_get: true
+    install_recommends: false
+    name: nginx
+
+- name: directories
+  loop: "{{ nginx_dirs }}"
+  file:
+    path: "{{ item }}"
+    state: directory
+
+- name: configuration
+  notify: restart nginx
+  template:
+    src: nginx.conf
+    dest: "{{ nginx_base_dir }}/nginx.conf"
+    validate: nginx -t -c %s
+
+- name: snippet
+  loop: "{{ nginx_snippet }}"
+  notify: restart nginx
+  template:
+    src: blocks.conf
+    dest: "{{ nginx_snippet_dir }}/{{ item.name }}.conf"
+
+- name: global
+  loop: "{{ nginx_global }}"
+  notify: restart nginx
+  template:
+    src: blocks.conf
+    dest: "{{ nginx_global_dir }}/{{ item.name }}.conf"
+    validate: bash -c 'nginx -t -c /dev/stdin <<< "events { worker_connections 2; } include %s;"'
+
+- name: http
+  loop: "{{ nginx_http }}"
+  notify: restart nginx
+  template:
+    src: blocks.conf
+    dest: "{{ nginx_http_dir }}/{{ item.name }}.conf"
+    validate: bash -c 'nginx -t -c /dev/stdin <<< "events { worker_connections 1024; } http { include %s; }"'
+
+- name: stream
+  loop: "{{ nginx_stream }}"
+  notify: restart nginx
+  template:
+    src: blocks.conf
+    dest: "{{ nginx_stream_dir }}/{{ item.name }}.conf"
+    validate: bash -c 'nginx -t -c /dev/stdin <<< "include /etc/nginx/modules-enabled/*.conf; events { worker_connections 2; } stream { include %s; }"'
+
+- meta: flush_handlers
+
+- name: service
+  systemd:
+    name: nginx
+    enabled: true
+    state: started
+
+...

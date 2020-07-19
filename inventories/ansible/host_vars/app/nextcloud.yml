@@ -6,9 +6,10 @@ nc_apps:
   - calendar
   - contacts
   - groupfolders
-  - news
   - notes
   - tasks
+  - twofactor_backupcodes
+  - twofactor_totp
   - user_external
 
 nc_disable_apps:
