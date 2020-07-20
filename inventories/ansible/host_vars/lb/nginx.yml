@@ -74,38 +74,6 @@ nginx_http:
 
         location / {}
       }
-  - name: blog
-    content: |
-      server {
-        listen 443 ssl http2;
-        listen [::]:443 ssl http2;
-        server_name blog.karolak.fr;
-
-        include /etc/nginx/conf.d/snippet/tls.conf;
-        include /etc/nginx/conf.d/snippet/cert-karolak.conf;
-        include /etc/nginx/conf.d/snippet/acme-challenge.conf;
-
-        location /blog/ {
-          return 301 $scheme://$host/;
-        }
-
-        location /feed/ {
-          return 301 $scheme://$host/feeds/all.atom.xml;
-        }
-
-        location /index.xml {
-          return 301 $scheme://$host/feeds/all.atom.xml;
-        }
-
-        location / {
-          proxy_set_header Host $host;
-          proxy_set_header X-Real-IP $remote_addr;
-          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-          proxy_set_header X-Forwarded-Proto $scheme;
-
-          proxy_pass http://{{ lookup('dig', 'web.priv.karolak.fr') }}/;
-        }
-      }
   - name: blog-redirect
     content: |
       server {
@@ -118,46 +86,6 @@ nginx_http:
         include /etc/nginx/conf.d/snippet/acme-challenge.conf;
 
         return 301 https://blog.karolak.fr$request_uri;
-      }
-  - name: crypto
-    content: |
-      server {
-        listen 443 ssl http2;
-        listen [::]:443 ssl http2;
-        server_name crypto.karolak.fr;
-
-        include /etc/nginx/conf.d/snippet/tls.conf;
-        include /etc/nginx/conf.d/snippet/cert-karolak.conf;
-        include /etc/nginx/conf.d/snippet/acme-challenge.conf;
-
-        location / {
-          proxy_set_header Host $host;
-          proxy_set_header X-Real-IP $remote_addr;
-          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-          proxy_set_header X-Forwarded-Proto $scheme;
-
-          proxy_pass http://{{ lookup('dig', 'web.priv.karolak.fr') }}/;
-        }
-      }
-  - name: cv
-    content: |
-      server {
-        listen 443 ssl http2;
-        listen [::]:443 ssl http2;
-        server_name cv.karolak.fr;
-
-        include /etc/nginx/conf.d/snippet/tls.conf;
-        include /etc/nginx/conf.d/snippet/cert-karolak.conf;
-        include /etc/nginx/conf.d/snippet/acme-challenge.conf;
-
-        location / {
-          proxy_set_header Host $host;
-          proxy_set_header X-Real-IP $remote_addr;
-          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-          proxy_set_header X-Forwarded-Proto $scheme;
-
-          proxy_pass http://{{ lookup('dig', 'web.priv.karolak.fr') }}/;
-        }
       }
   - name: gitea
     content: |
@@ -179,46 +107,6 @@ nginx_http:
         rewrite ^/assr/crypto-cours https://git.sr.ht/~nka/crypto-cours permanent;
         rewrite ^/ https://git.sr.ht/~nka permanent;
       }
-  - name: grocy
-    content: |
-      server {
-        listen 443 ssl http2;
-        listen [::]:443 ssl http2;
-        server_name grocy.karolak.fr;
-
-        include /etc/nginx/conf.d/snippet/tls.conf;
-        include /etc/nginx/conf.d/snippet/cert-karolak.conf;
-        include /etc/nginx/conf.d/snippet/acme-challenge.conf;
-
-        location / {
-          proxy_set_header Host $host;
-          proxy_set_header X-Real-IP $remote_addr;
-          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-          proxy_set_header X-Forwarded-Proto $scheme;
-
-          proxy_pass http://{{ lookup('dig', 'app.priv.karolak.fr') }}/;
-        }
-      }
-  - name: karolak-carrelage
-    content: |
-      server {
-        listen 443 ssl http2;
-        listen [::]:443 ssl http2;
-        server_name karolak-carrelage.com www.karolak-carrelage.com karolak-carrelage.fr www.karolak-carrelage.fr;
-
-        include /etc/nginx/conf.d/snippet/tls.conf;
-        include /etc/nginx/conf.d/snippet/cert-karolak.conf;
-        include /etc/nginx/conf.d/snippet/acme-challenge.conf;
-
-        location / {
-          proxy_set_header Host $host;
-          proxy_set_header X-Real-IP $remote_addr;
-          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-          proxy_set_header X-Forwarded-Proto $scheme;
-
-          proxy_pass http://{{ lookup('dig', 'web.priv.karolak.fr') }}/;
-        }
-      }
   - name: roundcube
     content: |
       server {
@@ -236,7 +124,7 @@ nginx_http:
           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
           proxy_set_header X-Forwarded-Proto $scheme;
 
-          proxy_pass http://{{ lookup('dig', 'smtp.priv.karolak.fr') }}/;
+          proxy_pass http://{{ lookup('dig', 'app.priv.karolak.fr') }}/;
         }
       }
   - name: roundcube-people
@@ -443,26 +331,5 @@ nginx_http:
           proxy_set_header X-Forwarded-Proto $scheme;
 
           proxy_pass http://{{ lookup('dig', 'app.priv.karolak.fr') }}/;
-        }
-      }
-  - name: wedding
-    content: |
-      server {
-        listen 443 ssl http2;
-        listen [::]:443 ssl http2;
-        server_name wedding.karolak.fr;
-
-        include /etc/nginx/conf.d/snippet/tls.conf;
-        include /etc/nginx/conf.d/snippet/cert-karolak.conf;
-        include /etc/nginx/conf.d/snippet/acme-challenge.conf;
-        include /etc/nginx/conf.d/snippet/no-index.conf;
-
-        location / {
-          proxy_set_header Host $host;
-          proxy_set_header X-Real-IP $remote_addr;
-          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-          proxy_set_header X-Forwarded-Proto $scheme;
-
-          proxy_pass http://{{ lookup('dig', 'web.priv.karolak.fr') }}/;
         }
       }

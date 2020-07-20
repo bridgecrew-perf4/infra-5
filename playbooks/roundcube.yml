@@ -2,7 +2,7 @@
 ---
 
 - name: ROUNDCUBE
-  hosts: mail:smtp
+  hosts: roundcube
   roles:
     - roundcube
 

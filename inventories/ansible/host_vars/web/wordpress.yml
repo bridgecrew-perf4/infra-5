@@ -1,9 +1,0 @@
----
-
-wp_db_admin_password: "{{ vault_wp_db_admin_password }}"
-wp_db_user_password: "{{ vault_wp_db_user_password }}"
-
-wp_domain: blog.karolak.fr
-
-wp_trusted_proxies:
-  - "{{ lookup('dig', 'lb.priv.karolak.fr') }}"

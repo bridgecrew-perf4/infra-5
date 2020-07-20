@@ -22,7 +22,7 @@ provider "ovh" {}
 module "app_instance" {
   source = "./modules/scw-instance"
   name   = "app"
-  tags   = ["grocy", "nextcloud", "postgresql_server", "private", "redis", "rssbridge", "wallabag"]
+  tags   = ["nextcloud", "postgresql_server", "redis", "roundcube", "wallabag"]
 }
 
 module "lb_instance" {
@@ -41,18 +41,12 @@ module "smtp_instance" {
   ipv4_id = module.mail_ip.id
 }
 
-module "web_instance" {
-  source = "./modules/scw-instance"
-  name   = "web"
-  tags   = ["private"]
-}
-
 # IP
 
 module "lb_ip" {
   source  = "./modules/scw-ip"
   name    = "lb"
-  aliases = ["bag", "cloud", "git", "grocy", "mail", "ndata", "pfa", "rspamd", "rssbr", "www"]
+  aliases = ["bag", "cloud", "git", "mail", "ndata", "pfa", "rspamd", "www"]
 }
 
 module "mail_ip" {

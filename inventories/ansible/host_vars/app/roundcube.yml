@@ -1,0 +1,9 @@
+---
+
+rc_db_admin_password: '{{ vault_rc_db_admin_password }}'
+rc_db_user_password: '{{ vault_rc_db_user_password }}'
+rc_domains:
+  - mail.karolak.fr
+  - mail.maison-people.com
+rc_trusted_proxies:
+  - "{{ lookup('dig', 'lb.priv.karolak.fr.') }}"
