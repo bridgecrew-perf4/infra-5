@@ -82,6 +82,22 @@ resource "ovh_domain_zone_record" "apex" {
   target    = module.lb_instance.ipv4
 }
 
+resource "ovh_domain_zone_record" "autoconfig" {
+  zone      = "karolak.fr"
+  subdomain = "autoconfig"
+  fieldtype = "CNAME"
+  ttl       = "3600"
+  target    = "autoconfig.migadu.com."
+}
+
+resource "ovh_domain_zone_record" "autodiscover" {
+  zone      = "karolak.fr"
+  subdomain = "autodiscover"
+  fieldtype = "CNAME"
+  ttl       = "3600"
+  target    = "autodiscover.migadu.com."
+}
+
 resource "ovh_domain_zone_record" "blog" {
   zone      = "karolak.fr"
   subdomain = "blog"
@@ -128,12 +144,36 @@ resource "ovh_domain_zone_record" "dkim" {
   target    = "v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDHNE49B2ZAJ7Qr3NSGXWeiAZKPJHkkJvXGlO94N+04Yz8RN5ScT7qPQrSiP/SwoisQ1HJ0D3gqwcS0mfmYLAevP9FFfzPURbdmyi9lHIW7uQSDdwzcRDLNl9kweU/aU7RHz7S85ebEP1Db/HgEuXhUPCaSzl5LOld6MFjzJ0Q+8QIDAQAB"
 }
 
+resource "ovh_domain_zone_record" "dkim_1" {
+  zone      = "karolak.fr"
+  subdomain = "key1._domainkey"
+  fieldtype = "CNAME"
+  ttl       = "3600"
+  target    = "key1.karolak.fr._domainkey.migadu.com."
+}
+
+resource "ovh_domain_zone_record" "dkim_2" {
+  zone      = "karolak.fr"
+  subdomain = "key2._domainkey"
+  fieldtype = "CNAME"
+  ttl       = "3600"
+  target    = "key2.karolak.fr._domainkey.migadu.com."
+}
+
+resource "ovh_domain_zone_record" "dkim_3" {
+  zone      = "karolak.fr"
+  subdomain = "key3._domainkey"
+  fieldtype = "CNAME"
+  ttl       = "3600"
+  target    = "key3.karolak.fr._domainkey.migadu.com."
+}
+
 resource "ovh_domain_zone_record" "dmarc" {
   zone      = "karolak.fr"
   subdomain = "_dmarc"
   fieldtype = "TXT"
   ttl       = "600"
-  target    = "v=DMARC1; p=none; sp=none; pct=100; adkim=r; aspf=r; fo=1; ruf=mailto:postmaster+dmarc@karolak.fr; rua=mailto:re+zmzfjvcp9be@dmarc.postmarkapp.com;"
+  target    = "v=DMARC1; p=none; ruf=mailto:postmaster+dmarc@karolak.fr; rua=mailto:re+zmzfjvcp9be@dmarc.postmarkapp.com;"
 }
 
 resource "ovh_domain_zone_record" "home" {
@@ -144,11 +184,32 @@ resource "ovh_domain_zone_record" "home" {
   target    = "109.15.68.39"
 }
 
+resource "ovh_domain_zone_record" "migadu" {
+  zone      = "karolak.fr"
+  fieldtype = "TXT"
+  ttl       = "3600"
+  target    = "hosted-email-verify=ggebx6zs"
+}
+
 resource "ovh_domain_zone_record" "mx" {
   zone      = "karolak.fr"
   fieldtype = "MX"
   ttl       = "3600"
-  target    = "1 smtp.karolak.fr."
+  target    = "100 smtp.karolak.fr."
+}
+
+resource "ovh_domain_zone_record" "mx_10" {
+  zone      = "karolak.fr"
+  fieldtype = "MX"
+  ttl       = "3600"
+  target    = "10 aspmx1.migadu.com."
+}
+
+resource "ovh_domain_zone_record" "mx_20" {
+  zone      = "karolak.fr"
+  fieldtype = "MX"
+  ttl       = "3600"
+  target    = "20 aspmx1.migadu.com."
 }
 
 resource "ovh_domain_zone_record" "nas" {
@@ -177,7 +238,7 @@ resource "ovh_domain_zone_record" "spf" {
   zone      = "karolak.fr"
   fieldtype = "TXT"
   ttl       = "600"
-  target    = "v=spf1 mx a ~all"
+  target    = "v=spf1 include:spf.migadu.com mx a -all"
 }
 
 resource "ovh_domain_zone_record" "srv_imaps" {
@@ -185,13 +246,13 @@ resource "ovh_domain_zone_record" "srv_imaps" {
   subdomain = "_imaps._tcp"
   fieldtype = "SRV"
   ttl       = 3600
-  target    = "0 0 993 smtp.karolak.fr."
+  target    = "0 1 993 smtp.migadu.com."
 }
 
 resource "ovh_domain_zone_record" "srv_submission" {
   zone      = "karolak.fr"
-  subdomain = "_submission._tcp"
+  subdomain = "_submissions._tcp"
   fieldtype = "SRV"
   ttl       = 3600
-  target    = "0 0 587 smtp.karolak.fr."
+  target    = "0 1 465 smtp.migadu.com."
 }
