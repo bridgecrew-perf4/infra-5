@@ -78,7 +78,7 @@ nc_config:
     user_backends:
       - class: OC_User_IMAP
         arguments:
-          - imap.karolak.fr
+          - imap.migadu.com
           - 993
           - ssl
           - ""
@@ -91,7 +91,7 @@ nc_config:
     files:
       default_quota: 10 GB
     mail:
-      provisioning_settings: '{"active":true,"version":1,"email":"%USERID%","imapUser":"%USERID%","imapHost":"imap.karolak.fr","imapPort":993,"imapSslMode":"ssl","smtpUser":"%USERID%","smtpHost":"smtp.karolak.fr","smtpPort":587,"smtpSslMode":"tls"}'
+      provisioning_settings: '{"active":true,"version":1,"email":"%USERID%","imapUser":"%USERID%","imapHost":"imap.migadu.com","imapPort":993,"imapSslMode":"ssl","smtpUser":"%USERID%","smtpHost":"smtp.migadu.com","smtpPort":587,"smtpSslMode":"tls"}'
 
 nc_s3_access_key: "{{ vault_nc_s3_access_key }}"
 nc_s3_secret_key: "{{ vault_nc_s3_secret_key }}"
