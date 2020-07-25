@@ -12,7 +12,6 @@ bkp_jobs:
         /etc \
         /var/backups/postgres \
         /var/run/rss2email \
-        /var/www/grocy \
         /var/www/nextcloud \
         /var/www/nextcloud-data \
         /var/www/roundcubemail \
