@@ -40,16 +40,9 @@ nc_config:
     htaccess.RewriteBase: /
     log_type: syslog
     loglevel: 2
-    mail_domain: karolak.fr
+    mail_domain: app.karolak.fr
     mail_from_address: noreply
-    mail_smtpmode: smtp
-    mail_smtphost: smtp.karolak.fr
-    mail_smtpport: 587
-    mail_smtpsecure: tls
-    mail_smtpauthtype: LOGIN
-    mail_smtpauth: 1
-    mail_smtpname: noreply@karolak.fr
-    mail_smtppassword: "{{ vault_nc_smtp_password }}"
+    mail_smtpmode: sendmail
     memcache.distributed: \OC\Memcache\Redis
     memcache.local: \OC\Memcache\APCu
     memcache.locking: \OC\Memcache\Redis

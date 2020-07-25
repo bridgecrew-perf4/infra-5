@@ -12,13 +12,17 @@ compatibility_level = 2
 alias_maps = hash:/etc/aliases
 alias_database = hash:/etc/aliases
 
+{% if relay_host %}
 relayhost = {{ relay_host }}
+{% endif %}
 
+{% if relay_user and relay_password %}
 smtpd_sasl_auth_enable = yes
 smtp_sasl_security_options = noanonymous
 smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
 smtp_use_tls = yes
 smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt
+{% endif %}
 
 smtpd_relay_restrictions =
 	permit_mynetworks

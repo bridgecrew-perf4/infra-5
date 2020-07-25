@@ -74,7 +74,7 @@ nginx_http:
 
         location / {}
       }
-  - name: blog-redirect
+  - name: redirects
     content: |
       server {
         listen 443 ssl http2;
@@ -87,8 +87,6 @@ nginx_http:
 
         return 301 https://blog.karolak.fr$request_uri;
       }
-  - name: gitea
-    content: |
       server {
         listen 443 ssl http2;
         listen [::]:443 ssl http2;
@@ -144,7 +142,7 @@ nginx_http:
           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
           proxy_set_header X-Forwarded-Proto $scheme;
 
-          proxy_pass http://{{ lookup('dig', 'smtp.priv.karolak.fr') }}/;
+          proxy_pass http://{{ lookup('dig', 'app.priv.karolak.fr') }}/;
         }
       }
   - name: netdata
@@ -243,73 +241,6 @@ nginx_http:
 
         location = /.well-known/caldav {
           return 301 $scheme://$host:$server_port/remote.php/dav;
-        }
-      }
-  - name: postfixadmin
-    content: |
-      server {
-        listen 443 ssl http2;
-        listen [::]:443 ssl http2;
-        server_name pfa.karolak.fr;
-
-        include /etc/nginx/conf.d/snippet/tls.conf;
-        include /etc/nginx/conf.d/snippet/cert-karolak.conf;
-        include /etc/nginx/conf.d/snippet/acme-challenge.conf;
-        include /etc/nginx/conf.d/snippet/no-index.conf;
-
-        location / {
-          proxy_set_header Host $host;
-          proxy_set_header X-Real-IP $remote_addr;
-          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-          proxy_set_header X-Forwarded-Proto $scheme;
-
-          proxy_pass http://{{ lookup('dig', 'smtp.priv.karolak.fr') }}/;
-        }
-      }
-  - name: rspamd
-    content: |
-      server {
-        listen 443 ssl http2;
-        listen [::]:443 ssl http2;
-        server_name rspamd.karolak.fr;
-
-        include /etc/nginx/conf.d/snippet/tls.conf;
-        include /etc/nginx/conf.d/snippet/cert-karolak.conf;
-        include /etc/nginx/conf.d/snippet/acme-challenge.conf;
-        include /etc/nginx/conf.d/snippet/no-index.conf;
-
-        location / {
-          proxy_set_header Host $host;
-          proxy_set_header X-Real-IP $remote_addr;
-          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-          proxy_set_header X-Forwarded-Proto $scheme;
-
-          proxy_pass http://{{ lookup('dig', 'smtp.priv.karolak.fr') }}:11334/;
-
-          # home
-          allow {{ lookup('dig', 'home.karolak.fr') }};
-
-          deny all;
-        }
-      }
-  - name: rssbridge
-    content: |
-      server {
-        listen 443 ssl http2;
-        listen [::]:443 ssl http2;
-        server_name rssbr.karolak.fr;
-
-        include /etc/nginx/conf.d/snippet/tls.conf;
-        include /etc/nginx/conf.d/snippet/cert-karolak.conf;
-        include /etc/nginx/conf.d/snippet/acme-challenge.conf;
-
-        location / {
-          proxy_set_header Host $host;
-          proxy_set_header X-Real-IP $remote_addr;
-          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-          proxy_set_header X-Forwarded-Proto $scheme;
-
-          proxy_pass http://{{ lookup('dig', 'app.priv.karolak.fr') }}/;
         }
       }
   - name: wallabag

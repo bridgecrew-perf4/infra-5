@@ -31,6 +31,9 @@
     line: 'root: {{ relay_admin }}'
 
 - name: configure sasl password
+  when:
+    - relay_user | d()
+    - relay_password | d()
   notify: rebuild sasl_passwd
   copy:
     dest: /etc/postfix/sasl_passwd

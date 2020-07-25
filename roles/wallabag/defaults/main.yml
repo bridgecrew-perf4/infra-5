@@ -38,10 +38,6 @@ bag_redis_password:
 
 bag_domain_name: bag.example.net
 
-bag_smtp_host:
-bag_smtp_port:
-bag_smtp_user:
-bag_smtp_password:
 bag_smtp_from: noreply@example.net
 
 bag_locale: en

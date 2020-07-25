@@ -1,9 +1,0 @@
-#!/usr/bin/env ansible-playbook
----
-
-- name: POSTFIXADMIN
-  hosts: mail:smtp
-  roles:
-    - postfixadmin
-
-...

@@ -9,11 +9,7 @@ bag_locale: fr
 
 bag_secret: "{{ vault_bag_secret }}"
 
-bag_smtp_host: smtp.karolak.fr
-bag_smtp_password: "{{ vault_relay_password }}"
-bag_smtp_port: 587
-bag_smtp_user: "{{ relay_user }}"
-bag_smtp_from: "{{ relay_user }}"
+bag_smtp_from: noreply@app.karolak.fr
 
 bag_trusted_proxies:
   - "{{ lookup('dig', 'lb.priv.karolak.fr.') }}"

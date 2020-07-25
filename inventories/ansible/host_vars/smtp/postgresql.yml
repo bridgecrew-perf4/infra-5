@@ -1,3 +1,0 @@
----
-
-pg_password: "{{ vault_pg_password }}"

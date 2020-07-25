@@ -1,9 +1,0 @@
-#!/usr/bin/env ansible-playbook
----
-
-- name: IMAP SERVER
-  hosts: imap:imap_server
-  roles:
-    - dovecot
-
-...

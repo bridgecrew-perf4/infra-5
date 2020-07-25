@@ -8,10 +8,7 @@ parameters:
     database_table_prefix: {{ bag_db_prefix }}
     database_charset: {{ bag_db_charset }}
     domain_name: 'https://{{ bag_domain_name }}'
-    mailer_transport: smtp
-    mailer_host: {{ bag_smtp_host }}
-    mailer_user: {{ bag_smtp_user }}
-    mailer_password: {{ bag_smtp_password }}
+    mailer_transport: sendmail
     locale: {{ bag_locale }}
     secret: {{ bag_secret }}
     from_email: {{ bag_smtp_from }}

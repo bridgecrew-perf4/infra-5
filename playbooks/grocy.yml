@@ -1,7 +1,0 @@
-#!/usr/bin/env ansible-playbook
----
-
-- name: GROCY SERVER
-  hosts: grocy
-  roles:
-    - grocy

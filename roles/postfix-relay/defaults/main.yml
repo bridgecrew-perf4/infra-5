@@ -20,10 +20,10 @@ relay_networks:
   - "[::ffff:127.0.0.0]/104"
   - "[::1]/128"
 
-relay_host: "[mail.example.net]:587"
-relay_user: noreply@example.net
+relay_host:
+relay_user:
 relay_password:
 
-relay_admin: admin@example.net
+relay_admin:
 
 ...

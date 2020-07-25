@@ -33,26 +33,12 @@ module "lb_instance" {
   ipv4_id = module.lb_ip.id
 }
 
-module "smtp_instance" {
-  source  = "./modules/scw-instance"
-  name    = "smtp"
-  type    = "START1-XS"
-  tags    = ["imap", "postgresql_server", "public", "redis", "rspamd"]
-  ipv4_id = module.mail_ip.id
-}
-
 # IP
 
 module "lb_ip" {
   source  = "./modules/scw-ip"
   name    = "lb"
   aliases = ["bag", "cloud", "git", "mail", "ndata", "pfa", "rspamd", "www"]
-}
-
-module "mail_ip" {
-  source  = "./modules/scw-ip"
-  name    = "smtp"
-  aliases = ["imap"]
 }
 
 # STORAGE
@@ -130,14 +116,6 @@ resource "ovh_domain_zone_record" "cv" {
   target    = "cv-nicolas-karolak.netlify.app."
 }
 
-resource "ovh_domain_zone_record" "dkim" {
-  zone      = "karolak.fr"
-  subdomain = "mail._domainkey"
-  fieldtype = "TXT"
-  ttl       = "600"
-  target    = "v=DKIM1; k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDHNE49B2ZAJ7Qr3NSGXWeiAZKPJHkkJvXGlO94N+04Yz8RN5ScT7qPQrSiP/SwoisQ1HJ0D3gqwcS0mfmYLAevP9FFfzPURbdmyi9lHIW7uQSDdwzcRDLNl9kweU/aU7RHz7S85ebEP1Db/HgEuXhUPCaSzl5LOld6MFjzJ0Q+8QIDAQAB"
-}
-
 resource "ovh_domain_zone_record" "dkim_1" {
   zone      = "karolak.fr"
   subdomain = "key1._domainkey"
@@ -167,7 +145,7 @@ resource "ovh_domain_zone_record" "dmarc" {
   subdomain = "_dmarc"
   fieldtype = "TXT"
   ttl       = "600"
-  target    = "v=DMARC1; p=none; ruf=mailto:postmaster+dmarc@karolak.fr; rua=mailto:re+zmzfjvcp9be@dmarc.postmarkapp.com;"
+  target    = "v=DMARC1; p=reject; ruf=mailto:postmaster+dmarc@karolak.fr; rua=mailto:re+zmzfjvcp9be@dmarc.postmarkapp.com;"
 }
 
 resource "ovh_domain_zone_record" "home" {
@@ -183,13 +161,6 @@ resource "ovh_domain_zone_record" "migadu" {
   fieldtype = "TXT"
   ttl       = "3600"
   target    = "hosted-email-verify=ggebx6zs"
-}
-
-resource "ovh_domain_zone_record" "mx" {
-  zone      = "karolak.fr"
-  fieldtype = "MX"
-  ttl       = "3600"
-  target    = "100 smtp.karolak.fr."
 }
 
 resource "ovh_domain_zone_record" "mx_10" {
@@ -232,7 +203,7 @@ resource "ovh_domain_zone_record" "spf" {
   zone      = "karolak.fr"
   fieldtype = "TXT"
   ttl       = "600"
-  target    = "v=spf1 include:spf.migadu.com mx a -all"
+  target    = "v=spf1 include:spf.migadu.com -all"
 }
 
 resource "ovh_domain_zone_record" "srv_imaps" {

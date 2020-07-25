@@ -1,7 +1,0 @@
----
-
-smtp_db_password: "{{ vault_smtp_db_password }}"
-smtp_host_domain: karolak.fr
-smtp_host_name: smtp
-smtp_tls_cert: /etc/letsencrypt/live/{{ certbot_domains[0] }}/fullchain.pem
-smtp_tls_key: /etc/letsencrypt/live/{{ certbot_domains[0] }}/privkey.pem
