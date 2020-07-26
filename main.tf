@@ -163,6 +163,22 @@ resource "ovh_domain_zone_record" "migadu" {
   target    = "hosted-email-verify=ggebx6zs"
 }
 
+resource "ovh_domain_zone_record" "mta-sts_cname" {
+  zone      = "karolak.fr"
+  subdomain = "mta-sts"
+  fieldtype = "CNAME"
+  ttl       = "3600"
+  target    = "mta-sts-karolak.netlify.app."
+}
+
+resource "ovh_domain_zone_record" "mta-sts_txt" {
+  zone      = "karolak.fr"
+  subdomain = "_mta-sts"
+  fieldtype = "TXT"
+  ttl       = "300"
+  target    = "v=STSv1; id=202007261528"
+}
+
 resource "ovh_domain_zone_record" "mx_10" {
   zone      = "karolak.fr"
   fieldtype = "MX"
