@@ -174,7 +174,7 @@ resource "ovh_domain_zone_record" "mx_20" {
   zone      = "karolak.fr"
   fieldtype = "MX"
   ttl       = "3600"
-  target    = "20 aspmx1.migadu.com."
+  target    = "20 aspmx2.migadu.com."
 }
 
 resource "ovh_domain_zone_record" "nas" {
