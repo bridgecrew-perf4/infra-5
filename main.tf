@@ -145,7 +145,7 @@ resource "ovh_domain_zone_record" "dmarc" {
   subdomain = "_dmarc"
   fieldtype = "TXT"
   ttl       = "600"
-  target    = "v=DMARC1; p=reject; ruf=mailto:postmaster+dmarc@karolak.fr; rua=mailto:re+zmzfjvcp9be@dmarc.postmarkapp.com;"
+  target    = "v=DMARC1; p=none; rua=mailto:e854197a@in.mailhardener.com"
 }
 
 resource "ovh_domain_zone_record" "home" {
@@ -236,4 +236,12 @@ resource "ovh_domain_zone_record" "srv_submission" {
   fieldtype = "SRV"
   ttl       = 3600
   target    = "0 1 465 smtp.migadu.com."
+}
+
+resource "ovh_domain_zone_record" "tls-rpt" {
+  zone      = "karolak.fr"
+  subdomain = "_smtp._tls"
+  fieldtype = "TXT"
+  ttl       = 600
+  target    = "v=TLSRPTv1; rua=mailto:tlsrpt@in.mailhardener.com"
 }
