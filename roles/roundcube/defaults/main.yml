@@ -43,7 +43,7 @@ rc_trusted_proxies: []
 rc_url: 'https://github.com/roundcube/roundcubemail/releases/download/{{ rc_version }}/roundcubemail-{{ rc_version }}-complete.tar.gz'
 rc_version: '1.4.7'
 rc_apache_vhost: |
-  <VirtualHost *:80>
+  <VirtualHost *:8080>
     DocumentRoot {{ rc_app_path }}/
     ServerName {{ rc_domains[0] }}
     ServerAlias {{ rc_domains | join(' ') }}

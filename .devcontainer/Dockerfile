@@ -13,6 +13,9 @@ RUN \
         dnsutils \
         # pyinfra
         python3-dev \
+        # pulumi
+        python3-venv \
+        python3-wheel \
         && \
     # clean up
     sudo apt-get autoremove -y && \
@@ -26,21 +29,37 @@ RUN \
     python3 -m pip install --user \
         # ansible
         ansible==${ANSIBLE_VERSION} \
+        # linters
         ansible-lint==${ANSIBLE_LINT_VERSION} \
+        # requirements
         bcrypt \
         dnspython \
         netaddr \
         passlib \
+        && \
+    :
+
+ENV PYINFRA_VERSION 1.0.4
+RUN \
+    python3 -m pip install --user \
         # pyinfra
+        pyinfra==${PYINFRA_VERSION} \
+        # linters
         flake8 \
         flake8-commas \
         flake8-docstrings \
         flake8-import-order \
         flake8-quotes \
         flake8-spellcheck \
-        pyinfra \
         pylint \
         && \
+    :
+
+ENV PULUMI_VERSION 2.7.1
+RUN \
+    # pulumi
+    sudo curl -LOSs https://get.pulumi.com/releases/sdk/pulumi-v${PULUMI_VERSION}-linux-x64.tar.gz && \
+    sudo tar -C /usr/local/bin --strip=1 -xaf pulumi-v${PULUMI_VERSION}-linux-x64.tar.gz && \
     :
 
 ENV TERRAFORM_VERSION 0.12.28

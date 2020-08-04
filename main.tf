@@ -20,16 +20,9 @@ provider "ovh" {}
 # INSTANCES
 
 module "app_instance" {
-  source = "./modules/scw-instance"
-  name   = "app"
-  tags   = ["nextcloud", "postgresql_server", "redis", "roundcube", "wallabag"]
-}
-
-module "lb_instance" {
   source  = "./modules/scw-instance"
-  name    = "lb"
-  type    = "START1-XS"
-  tags    = ["public"]
+  name    = "app"
+  tags    = ["nextcloud", "postgresql_server", "redis", "roundcube", "wallabag"]
   ipv4_id = module.lb_ip.id
 }
 
@@ -37,8 +30,8 @@ module "lb_instance" {
 
 module "lb_ip" {
   source  = "./modules/scw-ip"
-  name    = "lb"
-  aliases = ["bag", "cloud", "git", "mail", "ndata", "pfa", "rspamd", "www"]
+  name    = "app"
+  aliases = ["bag", "cloud", "git", "mail", "ndata", "www"]
 }
 
 # STORAGE
@@ -59,7 +52,7 @@ resource "ovh_domain_zone_record" "apex" {
   zone      = "karolak.fr"
   fieldtype = "A"
   ttl       = "3600"
-  target    = module.lb_instance.ipv4
+  target    = module.app_instance.ipv4
 }
 
 resource "ovh_domain_zone_record" "autoconfig" {

@@ -2,7 +2,7 @@
 ---
 
 - name: NGINX SERVER
-  hosts: lb
+  hosts: app
   roles:
     - nginx
 

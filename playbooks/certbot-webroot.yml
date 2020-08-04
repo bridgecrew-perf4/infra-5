@@ -2,7 +2,7 @@
 ---
 
 - name: CERTBOT WEBROOT
-  hosts: lb
+  hosts: app
   roles:
     - certbot-webroot
 

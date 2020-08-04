@@ -47,7 +47,7 @@ nc_domains:
 nc_trusted_proxies: []
 
 nc_apache_vhost: |
-  <VirtualHost *:80>
+  <VirtualHost *:8080>
     DocumentRoot {{ nc_app_path }}/
     ServerName {{ nc_domains[0] }}
     ServerAlias {{ nc_domains | join(' ') }}

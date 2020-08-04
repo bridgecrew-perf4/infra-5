@@ -58,7 +58,7 @@ bag_import_services:
 bag_trusted_proxies: []
 
 bag_apache_vhost: |
-  <VirtualHost *:80>
+  <VirtualHost *:8080>
     ServerName {{ bag_domain_name }}
 
     DocumentRoot {{ bag_path }}/web

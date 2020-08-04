@@ -24,6 +24,11 @@ apply:
 requirements:
 	ansible-galaxy role install -r requirements.yml -f
 
+.PHONY: vault
+## vault: Edit vault secrets
+vault:
+	ansible-vault edit inventories/ansible/group_vars/all/vault.yml
+
 .PHONY: encrypt
 ## encrypt: Encrypt string with ansible-vault : string=<string-to-encrypt>
 encrypt:
