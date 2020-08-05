@@ -10,8 +10,8 @@ bkp_jobs:
       restic snapshots &> /dev/null || restic init
       restic backup \
         /etc \
+        /home/rss2email \
         /var/backups/postgres \
-        /var/run/rss2email \
         /var/www/nextcloud \
         /var/www/nextcloud-data \
         /var/www/roundcubemail \

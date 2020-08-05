@@ -9,7 +9,7 @@
 - name: Create {{ r2e_username }} user
   group:
     group: "{{ r2e_groupname }}"
-    home: /var/run/{{ r2e_username }}
+    home: /home/{{ r2e_username }}
     name: "{{ r2e_username }}"
     shell: /usr/sbin/nologin
     system: true
