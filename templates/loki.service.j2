@@ -1,0 +1,16 @@
+[Unit]
+Description=Loki Grafana
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User={{ loki_user }}
+Group={{ loki_group }}
+ExecStart={{ loki_home }}/loki-linux-amd64 -config.file {{ loki_home }}/loki-local-config.yaml
+
+SyslogIdentifier=loki
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

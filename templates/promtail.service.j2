@@ -1,0 +1,16 @@
+[Unit]
+Description=Promtail Loki
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User={{ promtail_user }}
+Group={{ promtail_group }}
+ExecStart={{ promtail_home }}/promtail-linux-amd64 -config.file {{ promtail_home }}/promtail-local-config.yaml
+
+SyslogIdentifier=promtail
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

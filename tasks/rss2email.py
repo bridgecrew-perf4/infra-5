@@ -8,16 +8,13 @@ from pyinfra.operations import (
 
 r2e_version = '3.11'
 r2e_username = 'rss2email'
-r2e_userid = 52000
 r2e_groupname = 'rss2email'
-r2e_groupid = 52000
 r2e_virtualenv = '/usr/local/venv/rss2email'
 r2e_when = 'hourly'
 
 server.group(
     {f'Create {r2e_groupname} group'},
     name=r2e_groupname,
-    gid=r2e_groupid,
     system=True,
 )
 
@@ -25,9 +22,8 @@ server.user(
     {f'Create {r2e_username} user'},
     name=r2e_username,
     group=r2e_groupname,
-    home=f'/var/run/{r2e_username}',
+    home=f'/home/{r2e_username}',
     shell='/usr/sbin/nologin',
-    uid=r2e_userid,
     system=True,
 )
 

@@ -1,9 +1,14 @@
+"""pyinfra inventory."""
+
+import io
+
 hosts = [
-    'grocy.pub.karolak.fr',
-    'lb.pub.karolak.fr',
-    'nextcloud.pub.karolak.fr',
-    'smtp.pub.karolak.fr',
-    'wallabag.pub.karolak.fr',
-    'web.pub.karolak.fr',
-    'workstation.pub.karolak.fr',
+    ('app.karolak.fr', {
+        'grafana_config': io.StringIO(
+            '[server]\n' +
+            'domain = logs.karolak.fr\n' +
+            'root_url = https://%(domain)s/\n' +
+            '',
+        ),
+    }),
 ]
