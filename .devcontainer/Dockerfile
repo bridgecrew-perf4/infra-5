@@ -13,9 +13,6 @@ RUN \
         dnsutils \
         # pyinfra
         python3-dev \
-        # pulumi
-        python3-venv \
-        python3-wheel \
         && \
     # clean up
     sudo apt-get autoremove -y && \
@@ -44,22 +41,14 @@ RUN \
     python3 -m pip install --user \
         # pyinfra
         pyinfra==${PYINFRA_VERSION} \
+        privy \
         # linters
         flake8 \
         flake8-commas \
         flake8-docstrings \
         flake8-import-order \
         flake8-quotes \
-        flake8-spellcheck \
-        pylint \
         && \
-    :
-
-ENV PULUMI_VERSION 2.7.1
-RUN \
-    # pulumi
-    sudo curl -LOSs https://get.pulumi.com/releases/sdk/pulumi-v${PULUMI_VERSION}-linux-x64.tar.gz && \
-    sudo tar -C /usr/local/bin --strip=1 -xaf pulumi-v${PULUMI_VERSION}-linux-x64.tar.gz && \
     :
 
 ENV TERRAFORM_VERSION 0.12.28
