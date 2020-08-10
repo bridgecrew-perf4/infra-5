@@ -20,13 +20,12 @@ RUN \
     sudo rm -rf /var/lib/apt/lists/* &&  \
     :
 
-ENV ANSIBLE_VERSION 2.9.10
+ENV ANSIBLE_VERSION 2.9.11
 ENV ANSIBLE_LINT_VERSION 4.2.0
 RUN \
     python3 -m pip install --user \
         # ansible
         ansible==${ANSIBLE_VERSION} \
-        # linters
         ansible-lint==${ANSIBLE_LINT_VERSION} \
         # requirements
         bcrypt \
@@ -36,25 +35,9 @@ RUN \
         && \
     :
 
-ENV PYINFRA_VERSION 1.0.4
-RUN \
-    python3 -m pip install --user \
-        # pyinfra
-        pyinfra==${PYINFRA_VERSION} \
-        privy \
-        # linters
-        flake8 \
-        flake8-commas \
-        flake8-docstrings \
-        flake8-import-order \
-        flake8-quotes \
-        && \
-    :
-
-ENV TERRAFORM_VERSION 0.12.28
+ENV TERRAFORM_VERSION 0.12.29
 RUN \
     # terraform
-    # import hashicorp gpg key
     sudo gpg --keyserver hkp://eu.pool.sks-keyservers.net --recv-key 51852D87348FFC4C && \
     sudo curl -LOSs https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
     sudo curl -LOSs https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_SHA256SUMS && \
@@ -65,7 +48,7 @@ RUN \
     sudo rm -f terraform_${TERRAFORM_VERSION}* && \
     :
 
-ENV TFLINT_VERSION 0.17.0
+ENV TFLINT_VERSION 0.18.0
 RUN \
     # tflint
     sudo curl -LOSs https://github.com/terraform-linters/tflint/releases/download/v${TFLINT_VERSION}/tflint_linux_amd64.zip && \

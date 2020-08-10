@@ -1,1 +1,0 @@
-"""Variables for all hosts."""
