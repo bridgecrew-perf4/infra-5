@@ -9,13 +9,20 @@ terraform {
     skip_region_validation      = true
     skip_credentials_validation = true
   }
+
+  required_providers {
+    ovh = {
+      source  = "terraform-providers/ovh"
+      version = "~> 0.8.0"
+    }
+    scaleway = {
+      source  = "scaleway/scaleway"
+      version = "~> 1.16.0"
+    }
+  }
+
+  required_version = ">= 0.13"
 }
-
-# PROVIDERS
-
-provider "scaleway" {}
-
-provider "ovh" {}
 
 # INSTANCES
 
