@@ -92,4 +92,4 @@ nc_s3_secret_key: "{{ vault_nc_s3_secret_key }}"
 nc_smtp_password: "{{ vault_nc_smtp_password }}"
 
 nc_trusted_proxies:
-  - "{{ lookup('dig', 'lb.priv.karolak.fr.') }}"
+  - '127.0.0.1'

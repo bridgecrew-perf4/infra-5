@@ -12,4 +12,4 @@ bag_secret: "{{ vault_bag_secret }}"
 bag_smtp_from: noreply@app.karolak.fr
 
 bag_trusted_proxies:
-  - "{{ lookup('dig', 'lb.priv.karolak.fr.') }}"
+  - '127.0.0.1'

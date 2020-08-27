@@ -6,4 +6,4 @@ rc_domains:
   - mail.karolak.fr
   - mail.maison-people.com
 rc_trusted_proxies:
-  - "{{ lookup('dig', 'lb.priv.karolak.fr.') }}"
+  - '127.0.0.1'
