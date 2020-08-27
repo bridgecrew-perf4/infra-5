@@ -20,8 +20,8 @@ RUN \
     sudo rm -rf /var/lib/apt/lists/* &&  \
     :
 
-ENV ANSIBLE_VERSION 2.9.11
-ENV ANSIBLE_LINT_VERSION 4.2.0
+ENV ANSIBLE_VERSION 2.10.0
+ENV ANSIBLE_LINT_VERSION 4.3.2
 RUN \
     python3 -m pip install --user \
         # ansible
@@ -35,7 +35,7 @@ RUN \
         && \
     :
 
-ENV TERRAFORM_VERSION 0.12.29
+ENV TERRAFORM_VERSION 0.13.1
 RUN \
     # terraform
     sudo gpg --keyserver hkp://eu.pool.sks-keyservers.net --recv-key 51852D87348FFC4C && \

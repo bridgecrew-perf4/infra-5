@@ -1,6 +1,6 @@
 ---
 
-version: "3"
+version: "3.8"
 
 services:
   app:
@@ -24,5 +24,3 @@ services:
     env_file:
       - "../ovh.conf"
       - "../scaleway.conf"
-
-...
