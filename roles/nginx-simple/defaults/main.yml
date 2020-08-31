@@ -1,0 +1,62 @@
+---
+
+nginx_packages:
+  - nginx
+  - python3-passlib
+  - ssl-cert
+
+# warning: this will erase existing nginx.conf content
+# nginx_main: |
+#   user www-data;
+#   worker_processes auto;
+#   events { worker_connections 1024; }
+#   [...]
+nginx_main:
+
+# list of snippets to create in /etc/nginx/snippets/
+# nginx_snippets:
+#   - name: acme-challenge
+#     content: |
+#       location ^~ /.well-known/acme-challenge/ {
+#         default_type text/plain;
+#         root /tmp;
+#       }
+nginx_snippets: []
+
+# list of configurations to create in /etc/nginx/conf.d/
+# nginx_confd:
+#   - name: tls
+#     content: |
+#       ssl_protocols TLSv1.3;
+#       [...]
+nginx_confd: []
+
+# list of sites to create in /etc/nginx/sites-available/
+# and create link to sites-enabled if 'enabled' is true
+# nginx_sites:
+#   - name: blog
+#     enabled: true
+#     content: |
+#       server {
+#         listen 80;
+#         server_name blog.example.net;
+#         [...]
+#       }
+nginx_sites: []
+
+# list of credentials to create
+# nginx_htpasswd:
+#   - path: /etc/nginx/htpasswd
+#     name: admin
+#     password: topsecret
+nginx_htpasswd: []
+
+# list of path relative to /etc/nginx
+# nginx_removes:
+#   - sites-enabled/default
+#   - conf.d/example.conf
+nginx_removes: []
+
+_nginx_validate: include /etc/nginx/modules-enabled/*.conf; events { worker_connections 2; }
+
+...

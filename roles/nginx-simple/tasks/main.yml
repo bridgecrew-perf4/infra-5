@@ -1,0 +1,66 @@
+---
+
+- name: install packages
+  apt:
+    force_apt_get: true
+    install_recommends: false
+    name: "{{ nginx_packages }}"
+
+- name: override main configuration if defined
+  when: nginx_main | d(none, true)
+  notify: restart nginx
+  template:
+    src: nginx.conf
+    dest: /etc/nginx/nginx.conf
+    validate: nginx -t -c %s
+
+- name: configure snippets
+  loop: "{{ nginx_snippets }}"
+  notify: restart nginx
+  template:
+    src: blocks.conf
+    dest: /etc/nginx/snippets/{{ item.name }}.conf
+
+- name: configure htpasswd
+  loop: "{{ nginx_htpasswd }}"
+  htpasswd:
+    path: "{{ item.path }}"
+    owner: root
+    group: www-data
+    mode: 0640
+    name: "{{ item.name }}"
+    password: "{{ item.password }}"
+
+- name: configure conf.d
+  loop: "{{ nginx_confd }}"
+  notify: restart nginx
+  template:
+    src: blocks.conf
+    dest: /etc/nginx/conf.d/{{ item.name }}.conf
+    validate: bash -c 'nginx -t -c /dev/stdin <<< "{{ _nginx_validate }} include %s;"'
+
+- name: configure sites-available
+  loop: "{{ nginx_sites }}"
+  notify: restart nginx
+  template:
+    src: blocks.conf
+    dest: /etc/nginx/sites-available/{{ item.name }}
+    validate: bash -c 'nginx -t -c /dev/stdin <<< "{{ _nginx_validate }} http { include %s; }"'
+
+- name: enable sites
+  loop: "{{ nginx_sites }}"
+  when: item.enabled | d(false)
+  notify: restart nginx
+  file:
+    src: /etc/nginx/sites-available/{{ item.name }}
+    dest: /etc/nginx/sites-enabled/{{ item.name }}
+    state: link
+
+- name: remove configurations files
+  notify: restart nginx
+  loop: "{{ nginx_removes }}"
+  file:
+    path: "{{ item }}"
+    state: absent
+
+- meta: flush_handlers
