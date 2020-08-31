@@ -1,0 +1,51 @@
+---
+
+- name: create loki group
+  group:
+    system: true
+    name: "{{ loki_group }}"
+
+- name: create loki user
+  group:
+    system: true
+    group: "{{ loki_group }}"
+    name: "{{ loki_user }}"
+    shell: /bin/bash
+    home: "{{ loki_home }}"
+
+- name: download loki
+  get_url:
+    url: https://github.com/grafana/loki/releases/download/v{{ loki_version }}/loki-linux-amd64.zip
+    dest: "{{ loki_home }}/loki-linux-amd64.zip"
+
+- name: extract loki
+  notify: restart loki
+  unarchive:
+    src: "{{ loki_home }}/loki-linux-amd64.zip"
+    dest: "{{ loki_home }}"
+    owner: "{{ loki_user }}"
+    group: "{{ loki_group }}"
+    mode: 0755
+    keep_newer: true
+    remote_src: true
+
+- name: configure loki
+  notify: restart loki
+  template:
+    src: loki-local-config.yaml.j2
+    dest: "{{ loki_home }}/loki-local-config.yaml"
+    owner: "{{ loki_user }}"
+    group: "{{ loki_group }}"
+    mode: 0640
+
+- name: create loki service
+  notify: restart loki
+  template:
+    src: loki.service.j2
+    dest: /etc/systemd/system/loki.service
+
+- name: ensure loki service is started
+  systemd:
+    name: loki.service
+    enabled: true
+    state: started

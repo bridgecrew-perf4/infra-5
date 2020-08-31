@@ -1,0 +1,8 @@
+---
+
+grafana_config: |
+  [server]
+  domain = localhost
+
+grafana_packages:
+  - grafana

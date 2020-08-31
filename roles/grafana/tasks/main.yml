@@ -1,0 +1,32 @@
+---
+
+- name: add grafana repository key
+  apt_key:
+    url: https://packages.grafana.com/gpg.key
+
+- name: add grafana repository
+  apt_repository:
+    repo: deb https://packages.grafana.com/oss/deb stable main
+    filename: grafana
+
+- name: install grafana
+  notify: restart grafana
+  apt:
+    force_apt_get: true
+    install_recommends: false
+    name: "{{ grafana_packages }}"
+
+- name: configure grafana
+  notify: restart grafana
+  copy:
+    dest: /etc/grafana/grafana.ini
+    owner: root
+    group: grafana
+    mode: 0640
+    content: "{{ grafana_config }}"
+
+- name: ensure grafana service is started
+  systemd:
+    name: grafana-server.service
+    enabled: true
+    state: started

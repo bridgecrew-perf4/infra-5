@@ -1,0 +1,6 @@
+---
+
+grafana_config: |
+  [server]
+  domain = logs.karolak.fr
+  root_url = https://%(domain)s/

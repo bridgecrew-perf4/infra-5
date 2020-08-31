@@ -1,0 +1,7 @@
+---
+
+- name: restart loki
+  systemd:
+    name: loki.service
+    daemon_reload: true
+    state: restarted

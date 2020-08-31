@@ -1,0 +1,7 @@
+---
+
+loki_version: 1.5.0
+
+loki_group: loki
+loki_user: loki
+loki_home: /opt/{{ loki_user }}
