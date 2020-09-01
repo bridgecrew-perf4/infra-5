@@ -31,12 +31,12 @@
 
 - name: configure loki
   notify: restart loki
-  template:
-    src: loki-local-config.yaml.j2
+  copy:
     dest: "{{ loki_home }}/loki-local-config.yaml"
     owner: "{{ loki_user }}"
     group: "{{ loki_group }}"
     mode: 0640
+    content: "{{ loki_config | to_nice_yaml(width=1337) }}"
 
 - name: create loki service
   notify: restart loki
