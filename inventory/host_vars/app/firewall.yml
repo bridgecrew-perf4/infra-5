@@ -2,7 +2,6 @@
 
 ferm_input_rules:
   - "{{ ferm_input_rule_ssh }}"
-  - "{{ ferm_input_rule_netdata }}"
   - proto:
       - tcp
     dport:
