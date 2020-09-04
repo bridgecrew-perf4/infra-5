@@ -1,5 +1,5 @@
 version: STSv1
-mode: testing
+mode: enforce
 mx: aspmx1.migadu.com
 mx: aspmx2.migadu.com
 max_age: 84600

@@ -145,7 +145,7 @@ resource "ovh_domain_zone_record" "dmarc" {
   subdomain = "_dmarc"
   fieldtype = "TXT"
   ttl       = "600"
-  target    = "v=DMARC1; p=none; rua=mailto:e854197a@in.mailhardener.com"
+  target    = "v=DMARC1; p=quarantine; rua=mailto:e854197a@in.mailhardener.com"
 }
 
 resource "ovh_domain_zone_record" "home" {
@@ -176,7 +176,7 @@ resource "ovh_domain_zone_record" "mta-sts_txt" {
   subdomain = "_mta-sts"
   fieldtype = "TXT"
   ttl       = "300"
-  target    = "v=STSv1; id=202007261541"
+  target    = "v=STSv1; id=202008041628"
 }
 
 resource "ovh_domain_zone_record" "mx_10" {
