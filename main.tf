@@ -176,7 +176,7 @@ resource "ovh_domain_zone_record" "mta-sts_txt" {
   subdomain = "_mta-sts"
   fieldtype = "TXT"
   ttl       = "300"
-  target    = "v=STSv1; id=202008041628"
+  target    = "v=STSv1; id=202008041644"
 }
 
 resource "ovh_domain_zone_record" "mx_10" {
