@@ -1,0 +1,16 @@
+---
+
+- name: configure sshd
+  notify: restart sshd
+  loop: "{{ sshd_config }}"
+  replace:
+    path: /etc/ssh/sshd_config
+    regexp: "{{ item.regexp }}"
+    replace: "{{ item.replace }}"
+
+- name: configure authorized_keys
+  loop: "{{ sshd_authorized_keys }}"
+  authorized_key:
+    user: "{{ item.user }}"
+    key: "{{ item.key }}"
+    state: "{{ item.state | d('present') }}"

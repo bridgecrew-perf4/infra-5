@@ -1,0 +1,45 @@
+---
+
+- name: install apache2 packages
+  apt:
+    force_apt_get: true
+    install_recommends: false
+    name: "{{ apache2_packages }}"
+
+- name: remove default vhost
+  notify: restart apache2
+  file:
+    path: /etc/apache2/sites-enabled/000-default.conf
+    state: absent
+
+- name: enable apache2 modules
+  notify: restart apache2
+  loop: "{{ apache2_mods }}"
+  apache2_module:
+    name: "{{ item }}"
+
+- meta: flush_handlers
+
+- name: configure apache2 ports
+  notify: restart apache2
+  copy:
+    dest: /etc/apache2/ports.conf
+    content: "{{ apache2_ports }}"
+
+- name: configure apache2 vhosts
+  notify: restart apache2
+  loop: "{{ apache2_vhosts }}"
+  loop_control:
+    label: "{{ item.name }}"
+  copy:
+    dest: /etc/apache2/sites-available/{{ item.name }}.conf
+    content: "{{ item.content }}"
+
+- name: enable apache2 vhosts
+  notify: restart apache2
+  loop: "{{ apache2_vhosts }}"
+  loop_control:
+    label: "{{ item.name }}"
+  command:
+    cmd: a2ensite {{ item.name }}.conf
+    creates: /etc/apache2/sites-enabled/{{ item.name }}.conf

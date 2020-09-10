@@ -1,0 +1,22 @@
+---
+
+- name: install ansible requirements
+  apt:
+    force_apt_get: true
+    install_recommends: false
+    name: "{{ php_ansible_requirements }}"
+
+- name: add sury php repository key
+  apt_key:
+    url: https://packages.sury.org/php/apt.gpg
+
+- name: add sury php repository sources list
+  apt_repository:
+    repo: deb https://packages.sury.org/php/ {{ ansible_distribution_release }} main
+    filename: php
+
+- name: install sury php {{ php_version }} packages
+  apt:
+    force_apt_get: true
+    install_recommends: false
+    name: "{{ php_packages }}"

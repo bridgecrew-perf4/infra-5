@@ -1,0 +1,9 @@
+---
+
+- name: 'restart fail2ban'
+  systemd:
+    enabled: true
+    name: 'fail2ban'
+    state: 'restarted'
+
+...

@@ -1,0 +1,29 @@
+---
+
+
+# filters to configure
+# f2b_filters:
+#   - name: nginx-401
+#     content: |
+#       [Definition]
+#       failregex = ^<HOST> - [^-[ ]+.+HTTP/\d.\d" 401
+#       ignoreregex =
+f2b_filters: []
+
+# jails to configure
+# f2b_jails:
+#   - name: nginx-401
+#     content: |
+#       [nginx-401]
+#       enabled = true
+#       filter = nginx-401
+#       logpath = /var/log/nginx*/*access*.log
+#       maxretry = 6
+#       bantime = 30
+f2b_jails: []
+
+# package to install
+f2b_packages:
+  - 'fail2ban'
+
+...

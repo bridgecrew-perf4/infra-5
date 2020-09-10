@@ -1,0 +1,24 @@
+---
+
+- name: 'install packages'
+  notify: 'restart fail2ban'
+  apt:
+    force_apt_get: true
+    install_recommends: false
+    name: '{{ f2b_packages }}'
+
+- name: 'setup filters'
+  notify: 'restart fail2ban'
+  loop: '{{ f2b_filters }}'
+  copy:
+    dest: '/etc/fail2ban/filter.d/{{ item.name }}.local'
+    content: '{{ item.content }}'
+
+- name: 'setup jails'
+  notify: 'restart fail2ban'
+  loop: '{{ f2b_jails }}'
+  copy:
+    dest: '/etc/fail2ban/jail.d/{{ item.name }}.local'
+    content: '{{ item.content }}'
+
+...

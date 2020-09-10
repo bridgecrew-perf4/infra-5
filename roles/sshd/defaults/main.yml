@@ -1,0 +1,14 @@
+---
+
+sshd_config:
+  # ensure public key authentication is enabled
+  - regexp: '^#?PubkeyAuthentication\s+.*$'
+    replace: 'PubkeyAuthentication yes'
+  # ensure password authentication is disabled
+  - regexp: '^#?PasswordAuthentication\s+.*$'
+    replace: 'PasswordAuthentication no'
+  # disable challenge-response authentication
+  - regexp: '^#?ChallengeResponseAuthentication\s+.*$'
+    replace: 'ChallengeResponseAuthentication no'
+
+sshd_authorized_keys: []

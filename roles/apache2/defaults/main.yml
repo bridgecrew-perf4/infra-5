@@ -1,0 +1,17 @@
+---
+
+apache2_packages:
+  - apache2
+
+apache2_mods: []
+
+apache2_vhosts: []
+
+apache2_ports: |
+  Listen 80
+  <IfModule ssl_module>
+          Listen 443
+  </IfModule>
+  <IfModule mod_gnutls.c>
+          Listen 443
+  </IfModule>

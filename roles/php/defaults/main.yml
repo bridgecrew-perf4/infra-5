@@ -1,0 +1,9 @@
+---
+
+php_ansible_requirements:
+  - gnupg
+
+php_version: 7.4
+
+php_packages:
+  - php{{ php_version }}-fpm
