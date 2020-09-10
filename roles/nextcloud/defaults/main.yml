@@ -24,7 +24,7 @@ nc_packages:
   - php-xml
   - php-zip
 
-nc_version: 19.0.2
+nc_version: 19.0.3
 
 nc_group: www-data
 nc_user: www-data
