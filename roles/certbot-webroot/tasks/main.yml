@@ -76,7 +76,7 @@
 
 - name: generate certificates - dry-run
   when:
-    - certbot_domains | length > 0
+    - certbot_wr_domains | length > 0
     - certbot_save_list is changed
   register: certbot_dry_run
   ignore_errors: true
@@ -101,7 +101,7 @@
 
 - name: generate certificates
   when:
-    - certbot_domains | length > 0
+    - certbot_wr_domains | length > 0
     - certbot_save_list is changed
     - certbot_dry_run is succeeded
   register: certbot_run
