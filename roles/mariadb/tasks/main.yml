@@ -74,21 +74,20 @@
       {{ mariadb_config_client }}
 
 - name: create databases
-  no_log: true
-  loop: "{{ mariadb_databases | dict2items(key_name='name', value_name='password') }}"
+  loop: "{{ mariadb_databases }}"
+  loop_control:
+    label: "{{ item.name }}"
   mysql_db:
     login_unix_socket: /run/mysqld/mysqld.sock
     name: "{{ item.name }}"
     state: present
 
 - name: create users
-  no_log: true
-  loop: "{{ mariadb_databases | dict2items(key_name='name', value_name='password') }}"
+  loop: "{{ mariadb_databases }}"
+  loop_control:
+    label: "{{ item.user }}"
   mysql_user:
     login_unix_socket: /run/mysqld/mysqld.sock
-    name: "{{ item.name }}"
+    name: "{{ item.user }}"
     password: "{{ item.password }}"
     priv: "{{ item.name }}.*:ALL"
-    host_all: true
-
-...
