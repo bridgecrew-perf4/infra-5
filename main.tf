@@ -186,18 +186,39 @@ resource "ovh_domain_zone_record" "mta-sts_txt" {
   target    = "v=STSv1; id=202008041644"
 }
 
-resource "ovh_domain_zone_record" "mx_10" {
+resource "ovh_domain_zone_record" "mx_google" {
   zone      = "karolak.fr"
   fieldtype = "MX"
   ttl       = "3600"
-  target    = "10 aspmx1.migadu.com."
+  target    = "1 aspmx.l.google.com."
 }
 
-resource "ovh_domain_zone_record" "mx_20" {
+resource "ovh_domain_zone_record" "mx_google_alt1" {
   zone      = "karolak.fr"
   fieldtype = "MX"
   ttl       = "3600"
-  target    = "20 aspmx2.migadu.com."
+  target    = "5 alt1.aspmx.l.google.com."
+}
+
+resource "ovh_domain_zone_record" "mx_google_alt2" {
+  zone      = "karolak.fr"
+  fieldtype = "MX"
+  ttl       = "3600"
+  target    = "5 alt2.aspmx.l.google.com."
+}
+
+resource "ovh_domain_zone_record" "mx_google_alt3" {
+  zone      = "karolak.fr"
+  fieldtype = "MX"
+  ttl       = "3600"
+  target    = "10 alt3.aspmx.l.google.com."
+}
+
+resource "ovh_domain_zone_record" "mx_google_alt4" {
+  zone      = "karolak.fr"
+  fieldtype = "MX"
+  ttl       = "3600"
+  target    = "10 alt4.aspmx.l.google.com."
 }
 
 resource "ovh_domain_zone_record" "nas" {
