@@ -148,6 +148,13 @@ resource "ovh_domain_zone_record" "dmarc" {
   target    = "v=DMARC1; p=quarantine; rua=mailto:e854197a@in.mailhardener.com"
 }
 
+resource "ovh_domain_zone_record" "google-site-verification" {
+  zone      = "karolak.fr"
+  fieldtype = "TXT"
+  ttl       = "86400"
+  target    = "google-site-verification=WOLwTVshv5wO7mPyGYHm9OfpQXGJ7Y2Gy14-qN-cqRs"
+}
+
 resource "ovh_domain_zone_record" "home" {
   zone      = "karolak.fr"
   subdomain = "home"
