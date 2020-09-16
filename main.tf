@@ -208,7 +208,7 @@ resource "ovh_domain_zone_record" "spf" {
   zone      = "karolak.fr"
   fieldtype = "TXT"
   ttl       = "600"
-  target    = "v=spf1 include:_spf.google.com ~all"
+  target    = "v=spf1 include:_spf.google.com -all"
 }
 
 resource "ovh_domain_zone_record" "srv_imaps" {
