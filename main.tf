@@ -105,7 +105,7 @@ resource "ovh_domain_zone_record" "dkim" {
   subdomain = "google._domainkey"
   fieldtype = "TXT"
   ttl       = "3600"
-  target    = "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiBePiW3VkAk7yJoWHmK2WHlc60XMOjilQPUnbXIjz4XnDc5Nb9mbTVJ88LfCw3ZaR7+6xep759lw3te5ZCU/Quopk3zCfvBQz7prdBEMkbdO468sAEiKsvmUtgx6MTOGuoKXndShIlgfK9RyelQsXaormOh7RJzGPzndaHi67+sAfrB9MgNQEZWRRxrpC7KUa8NZP1iyA+irBQZRShZVnIeS90pgL8A7tpjnzrnNeDXA9TnA+kFbdyTMZ/VASQAtmbiXtVrx0yYeEJIlFm1jlM9WtYrdb9/HKag61fvlMMggXUNnClGS21jRSiRNS0RN/+qgsHdHswZSazgnI+iwOwIDAQAB"
+  target    = "v=DKIM1;k=rsa;p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCUxIztxYsaYDBVZAN3yPSy3FOsevD9vNOMonSMq3lnVRtDTpHMw85rODv3GVTi3gdodxGtre2LzBfQea5mRomHU9PRwWpaQVa/PGjd3xn8W7fC5H7PB7tHKoF2LowIKwTuaz8GxdM7nUd1Q3DkY83bjWuVVXwPKB+fYLIDSreJKQIDAQAB;"
 }
 
 resource "ovh_domain_zone_record" "dmarc" {
