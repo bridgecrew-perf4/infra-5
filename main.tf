@@ -100,12 +100,20 @@ resource "ovh_domain_zone_record" "cv" {
   target    = "cv-nicolas-karolak.netlify.app."
 }
 
+resource "ovh_domain_zone_record" "dkim" {
+  zone      = "karolak.fr"
+  subdomain = "google._domainkey"
+  fieldtype = "TXT"
+  ttl       = "3600"
+  target    = "v=DKIM1; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiBePiW3VkAk7yJoWHmK2WHlc60XMOjilQPUnbXIjz4XnDc5Nb9mbTVJ88LfCw3ZaR7+6xep759lw3te5ZCU/Quopk3zCfvBQz7prdBEMkbdO468sAEiKsvmUtgx6MTOGuoKXndShIlgfK9RyelQsXaormOh7RJzGPzndaHi67+sAfrB9MgNQEZWRRxrpC7KUa8NZP1iyA+irBQZRShZVnIeS90pgL8A7tpjnzrnNeDXA9TnA+kFbdyTMZ/VASQAtmbiXtVrx0yYeEJIlFm1jlM9WtYrdb9/HKag61fvlMMggXUNnClGS21jRSiRNS0RN/+qgsHdHswZSazgnI+iwOwIDAQAB"
+}
+
 resource "ovh_domain_zone_record" "dmarc" {
   zone      = "karolak.fr"
   subdomain = "_dmarc"
   fieldtype = "TXT"
   ttl       = "600"
-  target    = "v=DMARC1; p=none; rua=mailto:e854197a@in.mailhardener.com"
+  target    = "v=DMARC1; p=reject; rua=mailto:e854197a@in.mailhardener.com"
 }
 
 resource "ovh_domain_zone_record" "google-site-verification" {
@@ -136,7 +144,7 @@ resource "ovh_domain_zone_record" "mta-sts_txt" {
   subdomain = "_mta-sts"
   fieldtype = "TXT"
   ttl       = "300"
-  target    = "v=STSv1; id=202009130844"
+  target    = "v=STSv1; id=202009160739"
 }
 
 resource "ovh_domain_zone_record" "mx_google" {
