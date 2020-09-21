@@ -6,7 +6,7 @@ bkp_packages:
 
 bkp_jobs: []
 
-bkp_restic_version: 0.9.6
+bkp_restic_version: 0.10.0
 bkp_restic_password:
 bkp_restic_repository:
 bkp_restic_s3_access_key:
