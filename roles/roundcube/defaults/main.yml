@@ -41,7 +41,7 @@ rc_plugins:
   - 'roundcube/carddav:3.0.3'
 rc_trusted_proxies: []
 rc_url: 'https://github.com/roundcube/roundcubemail/releases/download/{{ rc_version }}/roundcubemail-{{ rc_version }}-complete.tar.gz'
-rc_version: '1.4.8'
+rc_version: '1.4.9'
 rc_apache_vhost: |
   <VirtualHost *:8080>
     DocumentRoot {{ rc_app_path }}/
