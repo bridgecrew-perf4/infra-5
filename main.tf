@@ -12,12 +12,12 @@ terraform {
 
   required_providers {
     ovh = {
-      source  = "terraform-providers/ovh"
-      version = "~> 0.8.0"
+      source  = "ovh/ovh"
+      version = "~> 0.9.1"
     }
     scaleway = {
       source  = "scaleway/scaleway"
-      version = "~> 1.16.0"
+      version = "~> 1.17.0"
     }
   }
 
