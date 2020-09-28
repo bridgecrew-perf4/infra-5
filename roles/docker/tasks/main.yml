@@ -1,0 +1,22 @@
+---
+
+- name: add repository key
+  apt_key:
+    url: https://download.docker.com/linux/debian/gpg
+
+- name: add repository
+  apt_repository:
+    filename: docker
+    repo: deb [arch=amd64] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable
+
+- name: install packages
+  apt:
+    force_apt_get: true
+    install_recommends: false
+    name: "{{ docker_packages }}"
+
+- name: enable service
+  systemd:
+    name: docker
+    enabled: true
+    state: started

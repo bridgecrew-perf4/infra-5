@@ -1,0 +1,9 @@
+#!/usr/bin/env ansible-playbook
+---
+
+- name: KUBERNETES CLUSTER
+  hosts: all
+  roles:
+    - docker
+
+...
