@@ -24,42 +24,13 @@ terraform {
   required_version = ">= 0.13"
 }
 
-# INSTANCES
-
-module "app_instance" {
-  source  = "./modules/scw-instance"
-  name    = "app"
-  tags    = ["nextcloud", "postgresql_server", "redis", "roundcube", "wallabag"]
-  ipv4_id = module.lb_ip.id
-}
-
-# IP
-
-module "lb_ip" {
-  source  = "./modules/scw-ip"
-  name    = "app"
-  aliases = ["bag", "cloud", "git", "mail", "ndata", "www"]
-}
-
-# STORAGE
-
-resource "scaleway_object_bucket" "nextcloud" {
-  name = "karolak-nextcloud-data-bucket"
-  acl  = "private"
-}
-
-resource "scaleway_object_bucket" "backup" {
-  name = "karolak-backup-bucket"
-  acl  = "private"
-}
-
 # DNS
 
 resource "ovh_domain_zone_record" "apex" {
   zone      = "karolak.fr"
   fieldtype = "A"
   ttl       = "3600"
-  target    = module.app_instance.ipv4
+  target    = "109.15.68.39"
 }
 
 resource "ovh_domain_zone_record" "blog" {

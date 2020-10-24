@@ -8,11 +8,10 @@ RUN \
     sudo apt-get update && \
     sudo apt-get install -y \
         # ansible
-        libffi-dev \
-        libssl-dev \
+        #libffi-dev \
+        #libssl-dev \
         dnsutils \
-        # pyinfra
-        python3-dev \
+        python3-pip \
         && \
     # clean up
     sudo apt-get autoremove -y && \
@@ -20,8 +19,8 @@ RUN \
     sudo rm -rf /var/lib/apt/lists/* &&  \
     :
 
-ENV ANSIBLE_VERSION 2.9.13
-ENV ANSIBLE_LINT_VERSION 4.3.4
+ENV ANSIBLE_VERSION 2.10.1
+ENV ANSIBLE_LINT_VERSION 4.3.5
 RUN \
     python3 -m pip install --user \
         # ansible
@@ -35,7 +34,7 @@ RUN \
         && \
     :
 
-ENV TERRAFORM_VERSION 0.13.1
+ENV TERRAFORM_VERSION 0.13.5
 RUN \
     # terraform
     sudo gpg --keyserver hkp://eu.pool.sks-keyservers.net --recv-key 51852D87348FFC4C && \
@@ -48,7 +47,7 @@ RUN \
     sudo rm -f terraform_${TERRAFORM_VERSION}* && \
     :
 
-ENV TFLINT_VERSION 0.19.1
+ENV TFLINT_VERSION 0.20.3
 RUN \
     # tflint
     sudo curl -LOSs https://github.com/terraform-linters/tflint/releases/download/v${TFLINT_VERSION}/tflint_linux_amd64.zip && \

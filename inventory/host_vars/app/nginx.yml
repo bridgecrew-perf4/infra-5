@@ -98,33 +98,12 @@ nginx_http:
         include /etc/nginx/conf.d/snippet/acme-challenge.conf;
         include /etc/nginx/conf.d/snippet/no-index.conf;
 
-        rewrite ^/nicolas/devc https://git.sr.ht/~nka/devc permanent;
-        rewrite ^/nicolas/worksation https://git.sr.ht/~nka/worksation permanent;
-        rewrite ^/docker/debian-dev https://git.sr.ht/~nka/docker-debian-dev permanent;
-        rewrite ^/docker/archlinux-dev https://git.sr.ht/~nka/docker-archlinux-dev permanent;
-        rewrite ^/assr/crypto-tp https://git.sr.ht/~nka/crypto-tp permanent;
-        rewrite ^/assr/crypto-cours https://git.sr.ht/~nka/crypto-cours permanent;
-        rewrite ^/ https://git.sr.ht/~nka permanent;
-      }
-  - name: roundcube
-    content: |
-      server {
-        listen 443 ssl http2;
-        listen [::]:443 ssl http2;
-        server_name mail.karolak.fr;
-
-        include /etc/nginx/conf.d/snippet/tls.conf;
-        include /etc/nginx/conf.d/snippet/cert-karolak.conf;
-        include /etc/nginx/conf.d/snippet/acme-challenge.conf;
-
-        location / {
-          proxy_set_header Host $host;
-          proxy_set_header X-Real-IP $remote_addr;
-          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-          proxy_set_header X-Forwarded-Proto $scheme;
-
-          proxy_pass http://127.0.0.1:8080/;
-        }
+        rewrite ^/nicolas/devc https://github.com/nikaro/devc permanent;
+        rewrite ^/nicolas/worksation https://github.com/nikaro/worksation permanent;
+        rewrite ^/docker/debian-dev https://github.com/nikaro/docker-debian-dev permanent;
+        rewrite ^/assr/crypto-tp https://github.com/nikaro/crypto-tp permanent;
+        rewrite ^/assr/crypto-cours https://github.com/nikaro/crypto permanent;
+        rewrite ^/ https://github.com/nikaro permanent;
       }
   - name: roundcube-people
     content: |
@@ -136,125 +115,6 @@ nginx_http:
         include /etc/nginx/conf.d/snippet/tls.conf;
         include /etc/nginx/conf.d/snippet/cert-people.conf;
         include /etc/nginx/conf.d/snippet/acme-challenge.conf;
-
-        location / {
-          proxy_set_header Host $host;
-          proxy_set_header X-Real-IP $remote_addr;
-          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-          proxy_set_header X-Forwarded-Proto $scheme;
-
-          proxy_pass http://127.0.0.1:8080/;
-        }
-      }
-  - name: netdata
-    content: |
-      server {
-        listen 443 ssl http2;
-        listen [::]:443 ssl http2;
-        server_name ndata.karolak.fr;
-
-        include /etc/nginx/conf.d/snippet/tls.conf;
-        include /etc/nginx/conf.d/snippet/cert-karolak.conf;
-        include /etc/nginx/conf.d/snippet/acme-challenge.conf;
-        include /etc/nginx/conf.d/snippet/no-index.conf;
-
-        location ~ /(?<name>[a-zA-Z0-9]+)/(?<ndpath>.*) {
-          proxy_set_header Host $http_host;
-          proxy_set_header X-Real-IP $remote_addr;
-          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-          proxy_set_header X-Forwarded-Proto $scheme;
-
-          proxy_redirect off;
-          proxy_http_version 1.1;
-          proxy_pass_request_headers on;
-          proxy_set_header Connection "keep-alive";
-          proxy_store off;
-
-          proxy_pass http://$name.priv.karolak.fr:19999/$ndpath$is_args$args;
-
-          gzip on;
-          gzip_proxied any;
-          gzip_types *;
-
-          # home
-          allow {{ lookup('dig', 'home.karolak.fr') }};
-
-          deny all;
-        }
-
-        location ~ /(?<name>[a-zA-Z0-9]+) {
-          return 301 /$name/;
-        }
-      }
-  - name: nextcloud
-    content: |
-      server {
-        listen 443 ssl http2;
-        listen [::]:443 ssl http2;
-        server_name cloud.karolak.fr;
-
-        include /etc/nginx/conf.d/snippet/tls.conf;
-        include /etc/nginx/conf.d/snippet/cert-karolak.conf;
-        include /etc/nginx/conf.d/snippet/acme-challenge.conf;
-        include /etc/nginx/conf.d/snippet/no-index.conf;
-
-        location / {
-          proxy_set_header Host $http_host;
-          proxy_set_header X-Real-IP $remote_addr;
-          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-          proxy_set_header X-Forwarded-Proto $scheme;
-
-          proxy_pass http://127.0.0.1:8080/;
-        }
-
-        location = /.well-known/carddav {
-          return 301 $scheme://$host:$server_port/remote.php/dav;
-        }
-
-        location = /.well-known/caldav {
-          return 301 $scheme://$host:$server_port/remote.php/dav;
-        }
-      }
-  - name: nextcloud-people
-    content: |
-      server {
-        listen 443 ssl http2;
-        listen [::]:443 ssl http2;
-        server_name cloud.maison-people.com;
-
-        include /etc/nginx/conf.d/snippet/tls.conf;
-        include /etc/nginx/conf.d/snippet/cert-people.conf;
-        include /etc/nginx/conf.d/snippet/acme-challenge.conf;
-        include /etc/nginx/conf.d/snippet/no-index.conf;
-
-        location / {
-          proxy_set_header Host $http_host;
-          proxy_set_header X-Real-IP $remote_addr;
-          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-          proxy_set_header X-Forwarded-Proto $scheme;
-
-          proxy_pass http://127.0.0.1:8080/;
-        }
-
-        location = /.well-known/carddav {
-          return 301 $scheme://$host:$server_port/remote.php/dav;
-        }
-
-        location = /.well-known/caldav {
-          return 301 $scheme://$host:$server_port/remote.php/dav;
-        }
-      }
-  - name: wallabag
-    content: |
-      server {
-        listen 443 ssl http2;
-        listen [::]:443 ssl http2;
-        server_name bag.karolak.fr;
-
-        include /etc/nginx/conf.d/snippet/tls.conf;
-        include /etc/nginx/conf.d/snippet/cert-karolak.conf;
-        include /etc/nginx/conf.d/snippet/acme-challenge.conf;
-        include /etc/nginx/conf.d/snippet/no-index.conf;
 
         location / {
           proxy_set_header Host $host;
