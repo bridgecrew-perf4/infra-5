@@ -6,17 +6,35 @@
     install_recommends: false
     name: "{{ php_ansible_requirements }}"
 
-- name: add sury php repository key
+- name: add repository key
   apt_key:
-    url: https://packages.sury.org/php/apt.gpg
+    url: "{{ php_repository_key }}"
 
-- name: add sury php repository sources list
+- name: add repository sources list
   apt_repository:
-    repo: deb https://packages.sury.org/php/ {{ ansible_distribution_release }} main
+    repo: "{{ php_repository }}"
     filename: php
 
-- name: install sury php {{ php_version }} packages
+- name: install version {{ php_version }} packages
   apt:
     force_apt_get: true
     install_recommends: false
     name: "{{ php_packages }}"
+
+- name: create users
+  loop: "{{ php_users }}"
+  user:
+    name: "{{ item.name }}"
+    group: "{{ item.group | d(omit) }}"
+    password: "{{ item.password | d (omit) }}"
+    home: "{{ item.home }}"
+    shell: "{{ item.shell | d(omit) }}"
+
+- name: create pools
+  notify: restart php-fpm
+  loop: "{{ php_pools }}"
+  copy:
+    dest: /etc/php/{{ php_version }}/fpm/pool.d/{{ item.name }}.conf
+    content: |
+      [{{ item.name }}]
+      {{ item.content }}

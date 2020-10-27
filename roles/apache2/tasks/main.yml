@@ -1,32 +1,64 @@
 ---
 
-- name: install apache2 packages
+- name: install packages
   apt:
     force_apt_get: true
     install_recommends: false
     name: "{{ apache2_packages }}"
 
-- name: remove default vhost
+- name: disable default vhost
   notify: restart apache2
   file:
     path: /etc/apache2/sites-enabled/000-default.conf
     state: absent
 
-- name: enable apache2 modules
+- name: enable/disable modules
   notify: restart apache2
   loop: "{{ apache2_mods }}"
   apache2_module:
-    name: "{{ item }}"
+    name: "{{ item.name }}"
+    state: "{% if item.state == 'disabled' %}absent{% else %}present{% endif %}"
 
 - meta: flush_handlers
 
-- name: configure apache2 ports
+- name: configure confs
+  notify: restart apache2
+  loop: "{{ apache2_confs }}"
+  loop_control:
+    label: "{{ item.name }}"
+  copy:
+    dest: /etc/apache2/conf-available/{{ item.name }}.conf
+    content: "{{ item.content }}"
+
+- name: enable confs
+  notify: restart apache2
+  loop: "{{ apache2_confs }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: item.state == "enabled"
+  command:
+    cmd: a2enconf {{ item.name }}.conf
+    creates: /etc/apache2/conf-enabled/{{ item.name }}.conf
+
+- name: disable confs
+  notify: restart apache2
+  loop: "{{ apache2_confs }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: item.state == "disabled"
+  command:
+    cmd: a2disconf {{ item.name }}.conf
+    removes: /etc/apache2/conf-enabled/{{ item.name }}.conf
+
+- meta: flush_handlers
+
+- name: configure ports
   notify: restart apache2
   copy:
     dest: /etc/apache2/ports.conf
     content: "{{ apache2_ports }}"
 
-- name: configure apache2 vhosts
+- name: configure vhosts
   notify: restart apache2
   loop: "{{ apache2_vhosts }}"
   loop_control:
@@ -35,11 +67,22 @@
     dest: /etc/apache2/sites-available/{{ item.name }}.conf
     content: "{{ item.content }}"
 
-- name: enable apache2 vhosts
+- name: enable vhosts
   notify: restart apache2
   loop: "{{ apache2_vhosts }}"
   loop_control:
     label: "{{ item.name }}"
+  when: item.state == "enabled"
   command:
     cmd: a2ensite {{ item.name }}.conf
     creates: /etc/apache2/sites-enabled/{{ item.name }}.conf
+
+- name: disable vhosts
+  notify: restart apache2
+  loop: "{{ apache2_vhosts }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: item.state == "disabled"
+  command:
+    cmd: a2dissite {{ item.name }}.conf
+    removes: /etc/apache2/sites-enabled/{{ item.name }}.conf

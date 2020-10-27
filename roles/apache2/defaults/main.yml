@@ -3,8 +3,28 @@
 apache2_packages:
   - apache2
 
+# apache2_mods:
+#   - name: ssl
+#     state: enabled
+#   - name: proxy
+#     state: disabled
 apache2_mods: []
 
+# apache2_confs:
+#   - name: charset
+#     state: enabled
+#     content: |
+#       AddDefaultCharset UTF-8
+apache2_confs: []
+
+# apache2_vhosts:
+#   - name: default
+#     state: enabled
+#     content: |
+#       <VirtualHost *:80>
+#         DocumentRoot /var/www/html
+#         [...]
+#       </VirtualHost>
 apache2_vhosts: []
 
 apache2_ports: |
