@@ -102,6 +102,13 @@ resource "ovh_domain_zone_record" "home" {
   target    = "109.15.68.39"
 }
 
+resource "ovh_domain_zone_record" "keybase-site-verification" {
+  zone      = "karolak.fr"
+  fieldtype = "TXT"
+  ttl       = "86400"
+  target    = "keybase-site-verification=gYMxVcdl5X7nqzWlfPUuAxo4ynETWUg-yRyK8UkT_yI"
+}
+
 resource "ovh_domain_zone_record" "mta-sts_cname" {
   zone      = "karolak.fr"
   subdomain = "mta-sts"
