@@ -2,11 +2,11 @@
   "name": "infra",
   "dockerComposeFile": "docker-compose.yml",
   "service": "app",
-  "vim-extensions": [
+  "vimExtensions": [
     "pearofducks/ansible-vim",
-  	"hashivim/vim-terraform"
+    "hashivim/vim-terraform"
   ],
-  "vim-settings": [
+  "vimSettings": [
     "let g:terraform_align=1",
     "let g:terraform_fmt_on_save=1"
   ],
