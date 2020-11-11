@@ -71,12 +71,36 @@ resource "ovh_domain_zone_record" "cv" {
   target    = "cv-nicolas-karolak.netlify.app."
 }
 
-resource "ovh_domain_zone_record" "dkim" {
+resource "ovh_domain_zone_record" "dkim_google" {
   zone      = "karolak.fr"
   subdomain = "google._domainkey"
   fieldtype = "TXT"
   ttl       = "3600"
   target    = "v=DKIM1;k=rsa;p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCUxIztxYsaYDBVZAN3yPSy3FOsevD9vNOMonSMq3lnVRtDTpHMw85rODv3GVTi3gdodxGtre2LzBfQea5mRomHU9PRwWpaQVa/PGjd3xn8W7fC5H7PB7tHKoF2LowIKwTuaz8GxdM7nUd1Q3DkY83bjWuVVXwPKB+fYLIDSreJKQIDAQAB;"
+}
+
+resource "ovh_domain_zone_record" "dkim_migadu_1" {
+  zone      = "karolak.fr"
+  subdomain = "key1._domainkey"
+  fieldtype = "CNAME"
+  ttl       = "3600"
+  target    = "key1.karolak.fr._domainkey.migadu.com."
+}
+
+resource "ovh_domain_zone_record" "dkim_migadu_2" {
+  zone      = "karolak.fr"
+  subdomain = "key2._domainkey"
+  fieldtype = "CNAME"
+  ttl       = "3600"
+  target    = "key2.karolak.fr._domainkey.migadu.com."
+}
+
+resource "ovh_domain_zone_record" "dkim_migadu_3" {
+  zone      = "karolak.fr"
+  subdomain = "key3._domainkey"
+  fieldtype = "CNAME"
+  ttl       = "3600"
+  target    = "key3.karolak.fr._domainkey.migadu.com."
 }
 
 resource "ovh_domain_zone_record" "dmarc" {
@@ -100,6 +124,13 @@ resource "ovh_domain_zone_record" "home" {
   fieldtype = "A"
   ttl       = "3600"
   target    = "109.15.68.39"
+}
+
+resource "ovh_domain_zone_record" "hosted-email-verify" {
+  zone      = "karolak.fr"
+  fieldtype = "TXT"
+  ttl       = "86400"
+  target    = "hosted-email-verify=mqabrptk"
 }
 
 resource "ovh_domain_zone_record" "keybase-site-verification" {
@@ -160,6 +191,20 @@ resource "ovh_domain_zone_record" "mx_google_alt4" {
   target    = "10 alt4.aspmx.l.google.com."
 }
 
+resource "ovh_domain_zone_record" "mx_migadu_1" {
+  zone      = "karolak.fr"
+  fieldtype = "MX"
+  ttl       = "3600"
+  target    = "100 aspmx1.migadu.com."
+}
+
+resource "ovh_domain_zone_record" "mx_migadu_2" {
+  zone      = "karolak.fr"
+  fieldtype = "MX"
+  ttl       = "3600"
+  target    = "100 aspmx2.migadu.com."
+}
+
 resource "ovh_domain_zone_record" "nas" {
   zone      = "karolak.fr"
   subdomain = "nas"
@@ -186,7 +231,7 @@ resource "ovh_domain_zone_record" "spf" {
   zone      = "karolak.fr"
   fieldtype = "TXT"
   ttl       = "600"
-  target    = "v=spf1 include:_spf.google.com -all"
+  target    = "v=spf1 include:spf.migadu.com include:_spf.google.com -all"
 }
 
 resource "ovh_domain_zone_record" "srv_imaps" {
