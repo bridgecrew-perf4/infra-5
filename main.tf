@@ -153,7 +153,7 @@ resource "ovh_domain_zone_record" "mta-sts_txt" {
   subdomain = "_mta-sts"
   fieldtype = "TXT"
   ttl       = "300"
-  target    = "v=STSv1; id=202009160739"
+  target    = "v=STSv1; id=202011141241"
 }
 
 resource "ovh_domain_zone_record" "mx_google" {
