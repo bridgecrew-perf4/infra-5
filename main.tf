@@ -227,6 +227,14 @@ resource "ovh_domain_zone_record" "ns2" {
   target    = "ns105.ovh.net."
 }
 
+resource "ovh_domain_zone_record" "scaleway-challenge" {
+  zone      = "karolak.fr"
+  subdomain = "_scaleway-challenge"
+  fieldtype = "TXT"
+  ttl       = "86400"
+  target    = "88121030-c31c-415e-b727-06a0555119d2"
+}
+
 resource "ovh_domain_zone_record" "spf" {
   zone      = "karolak.fr"
   fieldtype = "TXT"
